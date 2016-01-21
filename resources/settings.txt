@@ -1,0 +1,48 @@
+#####################################################
+# Welcome in ICeDROID settings, here you can change #
+# the low level settings of the app.                #
+#####################################################
+
+# NOTE: Comments start with the hash symbol ('#').
+# Settings are in the form: SettingName (space)= (space)value
+
+## Name of the wirelss network interface to use:
+NetworkInterface = wlan0
+
+## ESSID is the identifier of the network you want to create
+ESSID = ICEDROID_NETWORK
+
+## This is the channel on which the network works
+NetworkChannel = 1
+
+## This is the unique identifier of the host, it is optional,
+## the application can deduce it alone
+HostID = null
+
+## The Host IP address, it is optional, the application
+## can deduce it alone
+HostIP = null
+
+## The network mask
+NetworkMask = 16
+
+## The broadcast address of the network
+BroadcastAddress = 192.168.255.255
+
+## The number port on which to receive messages
+ReceivePort = 49152
+
+## Message max length
+MsgSize = 32768
+
+## Routing Algorithm
+RoutingAlgorithm = SprayAndWait
+
+## Messages' cache dimension (in MB)
+CacheSize = 2
+
+## Caching strategy, in case the cache is full
+CachingStrategy = FIFO
+
+## Forwarding strategy
+ForwardingStrategy = PRIORITY
