@@ -4,6 +4,9 @@
 *.ear
 *.class
 
+# Linux OS
+.directory
+
 # eclipse specific git ignore
 *.pydevproject
 .project
@@ -25,6 +28,13 @@ local.properties
 
 # External tool builders
 .externalToolBuilders/
+
+# Gradle
+build/**
+.gradle
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
 
 # Locally stored "Eclipse launch configurations"
 *.launch
@@ -58,3 +68,4 @@ local.properties
 
 # Code Recommenders
 .recommenders/
+/build/
