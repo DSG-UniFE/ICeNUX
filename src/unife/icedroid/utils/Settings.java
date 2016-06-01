@@ -82,7 +82,14 @@ public class Settings {
                         }
                         break;
                     case "NetworkMask":
-                        networkMask = "/" + setting[2];
+						Integer netMask;
+						try {
+							netMask = Integer.parseInt(setting[2]);
+						} catch (Exception e) {
+							System.out.println("Network Mask setting invalid. Using default mask: 16");
+							netMask = 16;
+						}
+                        networkMask = "/" + netMask;
                         break;
                     case "BroadcastAddress":
                         networkBroadcastAddress = setting[2];
@@ -140,8 +147,22 @@ public class Settings {
         /** Enabling wifi ad-hoc **/
         /**************************/
         if (hostID == null) {
-        	byte[] mac = NetworkInterface.getByName(networkInterface).
-        												getHardwareAddress();
+        	NetworkInterface ni = NetworkInterface.getByName(networkInterface);
+        	if (ni == null) {
+        		// No IP address assigned yet. Assigning one now
+        		if (hostIP == null) {
+        			throw new Exception("Interface " + networkInterface + " has no IP address assigned and " +
+        								"none was specified in the settings file");
+        		}
+        		
+        		String cmd;
+                cmd = "ip addr add " + hostIP + networkMask + " dev " + networkInterface;
+                Utils.rootExec(cmd);
+
+                // 
+            	ni = NetworkInterface.getByName(networkInterface);
+        	}
+        	byte[] mac = ni.getHardwareAddress();
         	StringBuilder sb = new StringBuilder();
             for (int i = 0; i < mac.length; i++) {
                 sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? ":" : ""));        
