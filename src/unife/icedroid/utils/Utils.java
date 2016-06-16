@@ -11,6 +11,10 @@ public class Utils {
     private final static boolean DEBUG = true;
 
     public static ArrayList<String> rootExec(String command) throws CommandImpossibleToRun {
+    	if (command.equals("")) {
+    		throw new CommandImpossibleToRun("Empty command string");
+    	}
+    	
         Process interactiveShell = null;
         BufferedReader input = null;
         PrintWriter output = null;
