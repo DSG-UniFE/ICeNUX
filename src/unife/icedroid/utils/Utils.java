@@ -10,13 +10,18 @@ public class Utils {
     private final static String TAG = "Utils";
     private final static boolean DEBUG = true;
 
-    public static ArrayList<String> rootExec(String command) throws CommandImpossibleToRun {
+    public static ArrayList<String> rootExec(String command) throws CommandImpossibleToRun, Exception {
+    	if (command.equals("")) {
+    		throw new CommandImpossibleToRun("Empty command string");
+    	}
+    	
         Process interactiveShell = null;
         BufferedReader input = null;
         PrintWriter output = null;
         BufferedReader error = null;
         String su = "su";
         ArrayList<String> results = new ArrayList<>();
+        String line = null;
 
         try {
             //Invoke the interactive shell
@@ -32,33 +37,37 @@ public class Utils {
             interactiveShell.waitFor();
 
             //Check for errors
-            if (error.readLine() != null) {
+            if ((line = error.readLine()) != null) {
+            	if (DEBUG) {
+	            	do {
+	            		System.err.println(line);
+	            	} while ((line = error.readLine()) != null);
+            	}
                 throw new CommandImpossibleToRun();
             }
 
             //Check to save some outputs
-            String line = null;
             while ((line = input.readLine()) != null) {
                 results.add(line);
             }
 
+        } catch (CommandImpossibleToRun citr) {
+        	throw citr;
+        } catch (Exception ex) {
+            String msg = ex.getMessage();
+            if (DEBUG) {
+            	msg = (msg != null) ? TAG + ": " + msg : TAG + ": " + 
+            		"rootExec() - impossible to run the command: " + command;
+            	System.out.println(msg);
+            }
+            
+            throw ex;
+        }
+        finally {
             //Close all
             input.close();
             output.close();
             interactiveShell.destroy();
-
-        } catch (Exception ex) {
-            String msg = ex.getMessage();
-            if (DEBUG) {
-            	if (msg != null) {
-            		msg = TAG + ": " + msg;
-            	} else {
-            		msg = TAG + ": " + "rootExec() - impossible to run the command: " + command;
-            	}
-            	System.out.println(msg);
-            }
-                    
-            throw new CommandImpossibleToRun("Impossible to run the command");
         }
 
         return results;
