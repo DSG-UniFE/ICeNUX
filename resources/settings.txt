@@ -7,7 +7,7 @@
 # Settings are in the form: SettingName (space)= (space)value
 
 ## Name of the wirelss network interface to use:
-NetworkInterface = wlan0
+NetworkInterface = wlp3s0
 
 ## ESSID is the identifier of the network you want to create
 ESSID = ICEDROID_NETWORK
@@ -16,12 +16,12 @@ ESSID = ICEDROID_NETWORK
 NetworkChannel = 1
 
 ## This is the unique identifier of the host, it is optional,
-## the application can deduce it alone
+## the application can deduce it by itself
 HostID = null
 
 ## The Host IP address, it is optional, the application
-## can deduce it alone
-HostIP = null
+## can deduce it by itself
+HostIP = 192.168.1.1
 
 ## The network mask
 NetworkMask = 16
