@@ -10,6 +10,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import sun.misc.PerformanceLogger;
+
 public class NICManager {
     
     private static enum OSDistribution {UNKNOWN, UBUNTU, RED_HAT}
@@ -27,7 +29,7 @@ public class NICManager {
             	}
         	}
         	if (osDistro == OSDistribution.UBUNTU) {
-	            //Check if the interface is already in adhoc state
+        		//Check if the interface is already in adhoc state
 	            if (!checkInterfaceStatus(s, "Mode:Ad-Hoc", "ESSID:\"" + s.getNetworkESSID() + "\"")) {
 	                
 	            	String cmd;
@@ -44,7 +46,7 @@ public class NICManager {
 	                cmd = "iwconfig " + s.getNetworkInterface() + " mode ad-hoc channel " +
 	                        s.getNetworkChannel() + " essid " + s.getNetworkESSID();
 	                Utils.rootExec(cmd);
-	
+	                
 	                //Set IP address and network settings
 	                s.configureHostIP();
 	
@@ -76,7 +78,7 @@ public class NICManager {
 	                cmd = "iwconfig " + s.getNetworkInterface() + " mode ad-hoc channel " +
 	                        s.getNetworkChannel() + " essid " + s.getNetworkESSID();
 	                Utils.rootExec(cmd);
-	
+	                
 	                //Set IP address and network settings
 	                s.configureHostIP();
 	

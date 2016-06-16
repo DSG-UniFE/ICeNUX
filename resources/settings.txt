@@ -6,7 +6,7 @@
 # NOTE: Comments start with the hash symbol ('#').
 # Settings are in the form: SettingName (space)= (space)value
 
-## Name of the wirelss network interface to use:
+## Name of the wireless network interface to use:
 NetworkInterface = wlp3s0
 
 ## ESSID is the identifier of the network you want to create
