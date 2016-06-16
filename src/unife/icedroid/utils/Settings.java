@@ -9,6 +9,7 @@ import unife.icedroid.services.ApplevDisseminationChannelService.OnMessageReceiv
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.Inet4Address;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -47,8 +48,7 @@ public class Settings {
 
     private Settings() throws Exception {
     	File file = new File("resources/settings.txt");
-        BufferedReader br = new BufferedReader(new InputStreamReader(
-        										new FileInputStream(file)));
+        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
         String[] setting;
         String line;
         String settingName;
@@ -142,26 +142,13 @@ public class Settings {
         br.close();
     }
 
-    private void enableWifiAdhoc() throws Exception {
-        /**************************/
-        /** Enabling wifi ad-hoc **/
-        /**************************/
+	public void buildHostID() throws SocketException, Exception {
+		//Assign HostID
         if (hostID == null) {
         	NetworkInterface ni = NetworkInterface.getByName(networkInterface);
         	if (ni == null) {
-        		// No IP address assigned yet. Assigning one now
-        		if (hostIP == null) {
-        			throw new Exception("Interface " + networkInterface + " has no IP address assigned and " +
-        								"none was specified in the settings file");
-        		}
-        		
-        		String cmd;
-                cmd = "ip addr add " + hostIP + networkMask + " dev " + networkInterface;
-                Utils.rootExec(cmd);
-
-                // 
-            	ni = NetworkInterface.getByName(networkInterface);
-        	}
+    			throw new Exception("Interface " + networkInterface + " could not be retrieved");
+    		}
         	byte[] mac = ni.getHardwareAddress();
         	StringBuilder sb = new StringBuilder();
             for (int i = 0; i < mac.length; i++) {
@@ -170,9 +157,7 @@ public class Settings {
             
             hostID = sb.toString();
         }
-
-        NICManager.startWifiAdhoc(this);
-    }
+	}
 
     private void startServices(OnMessageReceiveListener listener) throws Exception {
         /**************************************/
@@ -215,7 +200,8 @@ public class Settings {
                 if (instance == null) {
                     try {
                         instance = new Settings();
-                        instance.enableWifiAdhoc();
+                        NICManager.startWifiAdhoc(instance);
+                        instance.buildHostID();
                         instance.startServices(listener);
                     } catch (Exception ex) {
                         String msg = ex.getMessage();
@@ -255,11 +241,16 @@ public class Settings {
         return hostID;
     }
 
-    public String getHostIP() throws ImpossibleToGetIPAddress {
+    public String getHostIP() {
+        return hostIP;
+    }
+
+    public String configureHostIP() throws ImpossibleToGetIPAddress {
+        String cmd = null;
+
         if (hostIP == null) {
             try {
-                Enumeration<InetAddress> ias = NetworkInterface.
-                				getByName(networkInterface).getInetAddresses();
+                Enumeration<InetAddress> ias = NetworkInterface.getByName(networkInterface).getInetAddresses();
                 InetAddress address;
                 while (ias.hasMoreElements()) {
                     address = ias.nextElement();
@@ -281,15 +272,13 @@ public class Settings {
                 }
                 
             }
-
+            
             if (hostIP == null) {
                 Random randGen = new Random(System.currentTimeMillis());
                 ArrayList<String> results = null;
                 int numOfPacks = 2;
                 String address = null;
-                int addrC;
-                int addrD;
-                String cmd = null;
+                int addrC, addrD;
                 boolean found = false;
 
                 try {
@@ -297,37 +286,37 @@ public class Settings {
                         addrC = randGen.nextInt(254) + 1;
                         addrD = randGen.nextInt(254) + 1;
                         address = "192.168." + addrC + "." + addrD;
+                        
                         cmd = "arping -I " + networkInterface + " -D -c " + numOfPacks + " " + address;
-
                         results = Utils.rootExec(cmd);
                         if (results.remove(results.size() - 1).contains("Received 0")) {
                             found = true;
+                            hostIP = address;
                         }
                     }
-
-                    //Set IP address and network settings
-                    cmd = "ip addr add " + address + networkMask +
-                            " broadcast " + networkBroadcastAddress +
-                            " dev " + networkInterface;
-                    Utils.rootExec(cmd);
-
                 } catch (Exception ex) {
                     String msg = ex.getMessage();
-                    if (DEBUG) {
-                    	if (msg != null) {
-                    		msg = TAG + ": " + msg;
-                    	} else {
-                    		msg = TAG + ": " + "Impossible to get and address";
-                    	}
-                    	System.out.println(msg);
-                    }
-                    
-                    throw new ImpossibleToGetIPAddress("Impossible to get and address");
+                	msg = (msg != null) ? TAG + ": " + msg : TAG + ": " + "Impossible to check unicity of IP address";
+                	System.err.println(msg);
                 }
-               
-                if (DEBUG) System.out.println(TAG + " Ip address set: " + address);
-                hostIP = address;
             }
+        }
+        try {
+            //Set IP address and network settings
+            cmd = "ip addr add " + hostIP + networkMask + " broadcast " +
+            		networkBroadcastAddress + " dev " + networkInterface;
+            Utils.rootExec(cmd);
+
+            } catch (Exception ex) {
+                String msg = ex.getMessage();
+            	msg = (msg != null) ? TAG + ": " + msg : TAG + ": " + "Impossible to get an address";
+            	System.err.println(msg);
+                
+                throw new ImpossibleToGetIPAddress("Impossible to get an address");
+        }
+
+        if (DEBUG){
+        	System.out.println(TAG + " Ip address set: " + hostIP);
         }
         return hostIP;
     }
