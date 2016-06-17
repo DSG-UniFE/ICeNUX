@@ -10,8 +10,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import sun.misc.PerformanceLogger;
-
 public class NICManager {
     
     private static enum OSDistribution {UNKNOWN, UBUNTU, RED_HAT}
