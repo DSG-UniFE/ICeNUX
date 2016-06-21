@@ -1,0 +1,34 @@
+property CreateMenuName : "Create Network…"
+
+on run args 
+    tell application "System Events"
+        tell process "SystemUIServer"
+            tell menu bar 1
+                set menu_extras to value of attribute "AXDescription" of menu bar items
+                repeat with the_menu from 1 to the count of menu_extras
+                    if item the_menu of menu_extras contains "Wi-Fi" then exit repeat
+                end repeat
+                tell menu bar item the_menu
+                    perform action "AXPress"
+                    -- If Wi-Fi is off, turn it on
+                    if title of menu item 2 of menu 1 is "Turn Wi-Fi On" then
+                        perform action "AXPress" of menu item "Turn Wi-Fi On" of menu 1
+                        perform action "AXPress"
+                    end if
+                    perform action "AXPress" of menu item CreateMenuName of menu 1
+                end tell
+            end tell
+            repeat until exists window 1
+                delay 0.1
+            end repeat
+            tell window 1
+                keystroke item 1 of args
+                tell pop up button 1
+                    perform action "AXPress"
+                    perform action "AXPress" of menu item "1" of menu 1
+                end tell
+                click button 1
+            end tell
+        end tell
+    end tell
+end run
