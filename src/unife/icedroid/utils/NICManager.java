@@ -3,19 +3,18 @@ package unife.icedroid.utils;
 import unife.icedroid.utils.OSDetector.*;
 import unife.icedroid.exceptions.*;
 
+import java.util.ArrayList;
+/*
+import javax.script.*;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-
-import javax.script.*;
-
+*/
 
 public class NICManager {
-    
-    
     private final static String TAG = "NICManager";
     private final static boolean DEBUG = true;
+    private final static int ARP_PROBES_NUM = 3;
     private static OSDetector osDetector = OSDetector.getOSDetector();
 
     public static void startWifiAdhoc(Settings s) throws WifiAdhocImpossibleToEnable {
@@ -33,6 +32,9 @@ public class NICManager {
 				// Call Applescript interpreter
 				String[] args = {"/usr/bin/osascript", "enableWiFiAdHoc", s.getNetworkESSID()}; 
 				Utils.rootExec(args);
+				
+                configureNICIPAddress (s.getNetworkInterface(), s.getHostIP(),
+                		s.getNetworkMask(), s.getNetworkBroadcastAddress());
 				break;
 				/*
 				InputStream is = NICManager.class.getClassLoader().getResourceAsStream("enableWiFiAdHoc");
@@ -81,7 +83,8 @@ public class NICManager {
 	                Utils.rootExec(cmd);
 	                
 	                //Set IP address and network settings
-	                s.configureHostIP();
+	                configureNICIPAddress (s.getNetworkInterface(), s.getHostIP(),
+	                		s.getNetworkMask(), s.getNetworkBroadcastAddress());
 	
 	                //Pull up wifi interface
 	                cmd = "ip link set " + s.getNetworkInterface() + " up";
@@ -103,7 +106,8 @@ public class NICManager {
 	                Utils.rootExec(cmd);
 	                
 	                //Set IP address and network settings
-	                s.configureHostIP();
+	                configureNICIPAddress (s.getNetworkInterface(), s.getHostIP(),
+	                		s.getNetworkMask(), s.getNetworkBroadcastAddress());
 	
 	                //Pull up wifi interface
 	                cmd = "ip link set " + s.getNetworkInterface() + " up";
@@ -120,17 +124,47 @@ public class NICManager {
         } catch(Exception ex) {
             String msg = ex.getMessage();
             if (DEBUG) {
-            	if (msg != null) {
-            		msg = TAG + ": " + msg;
-            	} else {
-            		msg = TAG + ": " + "startWifiAdhoc(): Impossible to enable Wifi Ad-Hoc";
-            	}
+            	msg = TAG + ": " + ((msg != null) ?  msg :
+            		"startWifiAdhoc(): Impossible to enable Wifi Ad-Hoc");
             	System.out.println(msg);
             }
                                         
             throw new WifiAdhocImpossibleToEnable("Impossible to enable Wifi Ad-Hoc");
         }
     }
+
+	private static void configureNICIPAddress(String networkInterface, String hostIP,
+			String networkMask, String networkBroadcastAddress)
+					throws UnsupportedOSException, CommandImpossibleToRun {
+		String cmd = null;
+		OS osHost = osDetector.getOSName();
+    	switch (osHost) {
+		case LINUX:
+            cmd = "ip addr add " + hostIP + networkMask + " broadcast " +
+            		networkBroadcastAddress + " dev " + networkInterface;
+			break;
+		case MAC:
+            cmd = "ifconfig " + networkInterface + " inet " + hostIP + " netmask " + 
+            		networkMask + " broadcast " + networkBroadcastAddress;
+			break;
+		case UNKNOWN:
+		case WINDOWS:
+			throw new UnsupportedOSException("Impossible to configure a static IP " +
+					"address under " + osHost + " OS");        	
+    	}
+		try {
+            //Set IP address and network settings
+            Utils.rootExec(cmd);
+            } catch (Exception ex) {
+                String msg = ex.getMessage();
+            	msg = TAG + ": " + ((msg != null) ?  msg :
+            		"Impossible to set an address for the NIC " + networkInterface);
+            	System.err.println(msg);
+                
+                throw new CommandImpossibleToRun("Error running the following command: " + cmd);
+        }
+		
+	}
 
 	public static void stopWifiAdhoc(Settings s) throws WifiAdhocImpossibleToDisable {
         try {
@@ -176,11 +210,8 @@ public class NICManager {
         } catch (Exception ex) {
             String msg = ex.getMessage();
             if (DEBUG) {
-            	if (msg != null) {
-            		msg = TAG + ": " + msg;
-            	} else {
-            		msg = TAG + ": " + "stopWifiAdhoc(): Impossible to disable Wifi Ad-Hoc";
-            	}
+            	msg = TAG + ": " + ((msg != null) ?  msg :
+            		"stopWifiAdhoc(): Impossible to disable Wifi Ad-Hoc");
             	System.out.println(msg);
             }
             throw new WifiAdhocImpossibleToDisable("Impossible to disable Wifi Ad-Hoc");
@@ -209,4 +240,41 @@ public class NICManager {
         }
         return false;
     }
+
+	public static boolean isIPAvailable(String networkInterface, String address)
+			throws UnsupportedOSException, CommandImpossibleToRun {
+		ArrayList<String> commandResults = null;
+        String cmd = "arping -I " + networkInterface + " -D -c " + ARP_PROBES_NUM + " " + address;
+        try {
+        	commandResults = Utils.rootExec(cmd);
+        } catch (Exception ex) {
+            String msg = ex.getMessage();
+            if (DEBUG) {
+            	msg = TAG + ": " + ((msg != null) ?  msg :
+            		"isIPAvailable(): Impossible to get results from the arping command");
+            	System.out.println(msg);
+            }
+            throw new CommandImpossibleToRun("Failed execution of the arping command");
+	    }
+        
+    	String arpingRes = commandResults.remove(commandResults.size() - 1).toLowerCase();
+    	OS osHost = osDetector.getOSName();
+    	switch (osHost) {
+		case LINUX:
+			if (arpingRes.contains("received 0")) {
+				return true;
+			}
+			break;
+		case MAC:
+			if (arpingRes.contains("100% packet loss")) {
+				return true;
+			}
+			break;
+		case UNKNOWN:
+		case WINDOWS:
+			throw new UnsupportedOSException("arping not supported for " + osHost + " OS");
+    	}
+
+		return false;
+	}
 }

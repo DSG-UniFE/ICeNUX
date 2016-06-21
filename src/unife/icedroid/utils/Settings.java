@@ -1,6 +1,5 @@
 package unife.icedroid.utils;
 
-import unife.icedroid.exceptions.ImpossibleToGetIPAddress;
 import unife.icedroid.services.ApplevDisseminationChannelService;
 import unife.icedroid.services.HelloMessageService;
 import unife.icedroid.services.BroadcastReceiveThread;
@@ -11,7 +10,6 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.Inet4Address;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Random;
 import java.io.File;
@@ -47,7 +45,7 @@ public class Settings {
     private BroadcastSendThread sendThread;
 
     private Settings() throws Exception {
-    	File file = new File("resources/settings.txt");
+    	File file = new File("resources/settings.cfg");
         BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
         String[] setting;
         String line;
@@ -242,82 +240,68 @@ public class Settings {
     }
 
     public String getHostIP() {
+    	if ((hostIP == null) || hostIP.equals("")) {
+    		hostIP = configureHostIP();
+    		if ((hostIP == null) || hostIP.equals("")) {
+    			System.err.println ("Impossible to set any IP address for the NIC. " + 
+    					"Please make sure that a static IP is specified in the settings.cfg file"); 
+    			System.exit(-1);
+    		}
+            if (DEBUG) {
+            	System.out.println (TAG + ": Ip address set to " + hostIP);
+            }
+    	}
         return hostIP;
     }
 
-    public String configureHostIP() throws ImpossibleToGetIPAddress {
-        String cmd = null;
-
-        if (hostIP == null) {
-            try {
-                Enumeration<InetAddress> ias = NetworkInterface.getByName(networkInterface).getInetAddresses();
-                InetAddress address;
-                while (ias.hasMoreElements()) {
-                    address = ias.nextElement();
-                    if (address instanceof Inet4Address) {
-                        hostIP = address.getHostAddress();
-                        break;
-                    }
-                }
-            } catch (Exception ex) {
-                hostIP = null;
-                String msg = ex.getMessage();
-                if (DEBUG) {
-                	if (msg != null) {
-                		msg = TAG + ": " + msg;
-                	} else {
-                		msg = TAG + ": " + "Strange error....";
-                	}
-                	System.out.println(msg);
-                }
-                
-            }
-            
-            if (hostIP == null) {
-                Random randGen = new Random(System.currentTimeMillis());
-                ArrayList<String> results = null;
-                int numOfPacks = 2;
-                String address = null;
-                int addrC, addrD;
-                boolean found = false;
-
-                try {
-                    while (!found) {
-                        addrC = randGen.nextInt(254) + 1;
-                        addrD = randGen.nextInt(254) + 1;
-                        address = "192.168." + addrC + "." + addrD;
-                        
-                        cmd = "arping -I " + networkInterface + " -D -c " + numOfPacks + " " + address;
-                        results = Utils.rootExec(cmd);
-                        if (results.remove(results.size() - 1).contains("Received 0")) {
-                            found = true;
-                            hostIP = address;
-                        }
-                    }
-                } catch (Exception ex) {
-                    String msg = ex.getMessage();
-                	msg = (msg != null) ? TAG + ": " + msg : TAG + ": " + "Impossible to check unicity of IP address";
-                	System.err.println(msg);
-                }
-            }
-        }
+    private String configureHostIP() {
+    	String hostIP = null;
         try {
-            //Set IP address and network settings
-            cmd = "ip addr add " + hostIP + networkMask + " broadcast " +
-            		networkBroadcastAddress + " dev " + networkInterface;
-            Utils.rootExec(cmd);
-
-            } catch (Exception ex) {
-                String msg = ex.getMessage();
-            	msg = (msg != null) ? TAG + ": " + msg : TAG + ": " + "Impossible to get an address";
+            Enumeration<InetAddress> ias = NetworkInterface.getByName(networkInterface).getInetAddresses();
+            InetAddress address;
+            while (ias.hasMoreElements()) {
+                address = ias.nextElement();
+                if (address instanceof Inet4Address) {
+                    hostIP = address.getHostAddress();
+                    break;
+                }
+            }
+        } catch (SocketException sex) {
+            hostIP = null;
+            if (DEBUG) {
+                String msg = sex.getMessage();
+            	msg = TAG + ": " + ((msg != null) ? msg : 
+            		"Error detected while retrieving the NIC " + networkInterface);
             	System.err.println(msg);
-                
-                throw new ImpossibleToGetIPAddress("Impossible to get an address");
+        	}
         }
+        
+        if (hostIP == null) {
+            Random randGen = new Random(System.currentTimeMillis());
+            int addrC, addrD;
+            String address = null;
 
-        if (DEBUG) {
-        	System.out.println(TAG + " Ip address set: " + hostIP);
+            try {
+                while (hostIP == null) {
+                    addrC = randGen.nextInt(254) + 1;
+                    addrD = randGen.nextInt(254) + 1;
+                    address = "192.168." + addrC + "." + addrD;
+                    
+                    if (NICManager.isIPAvailable(networkInterface, address)) {
+                        hostIP = address;
+                    }
+                }
+            } catch (Exception ex) {
+            	if (DEBUG) {
+	                String msg = ex.getMessage();
+	            	msg = TAG + ": " + ((msg != null) ? msg :
+	            		"Impossible to check the unicity of the IP address");
+	            	System.err.println(msg);
+            	}
+            	return null;
+            }
         }
+        
         return hostIP;
     }
 
