@@ -1,12 +1,10 @@
 package unife.icedroid.core;
 
 import unife.icedroid.services.ApplevDisseminationChannelService;
-import unife.icedroid.services.HelloMessageService;
 import unife.icedroid.utils.Settings;
 import java.net.DatagramPacket;
 import java.io.ObjectInputStream;
 import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
 import java.util.Date;
 
 public class MessageDispatcher {

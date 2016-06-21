@@ -1,7 +1,7 @@
 package unife.icedroid.core;
 
 import java.util.HashMap;
-import java.util.Map;
+
 
 public class ICeDROIDMessage extends BaseMessage {
 	private static final long serialVersionUID = 1;
