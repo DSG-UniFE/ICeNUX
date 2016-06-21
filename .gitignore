@@ -69,3 +69,7 @@ gradle-app.setting
 # Code Recommenders
 .recommenders/
 /build/
+
+# Project-specific
+/resources/conversations/**
+/resources/subscriptions
