@@ -315,7 +315,7 @@ public class Settings {
                 throw new ImpossibleToGetIPAddress("Impossible to get an address");
         }
 
-        if (DEBUG){
+        if (DEBUG) {
         	System.out.println(TAG + " Ip address set: " + hostIP);
         }
         return hostIP;
