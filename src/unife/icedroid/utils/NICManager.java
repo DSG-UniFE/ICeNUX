@@ -30,7 +30,7 @@ public class NICManager {
         				"not yet supported for Windows OS");
 			case MAC:
 				// Call Applescript interpreter
-				String[] args = {"/usr/bin/osascript", "enableWiFiAdHoc", s.getNetworkESSID()}; 
+				String[] args = {"/usr/bin/osascript", "resources/enableWiFiAdHoc", s.getNetworkESSID()}; 
 				Utils.rootExec(args);
 				
                 configureNICIPAddress (s.getNetworkInterface(), s.getHostIP(),
@@ -144,7 +144,7 @@ public class NICManager {
             		networkBroadcastAddress + " dev " + networkInterface;
 			break;
 		case MAC:
-            cmd = "ifconfig " + networkInterface + " inet " + hostIP + " netmask " + 
+            cmd = "ifconfig " + networkInterface + " inet " + hostIP +
             		networkMask + " broadcast " + networkBroadcastAddress;
 			break;
 		case UNKNOWN:
