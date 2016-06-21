@@ -28,7 +28,10 @@ on run args
                     perform action "AXPress" of menu item "1" of menu 1
                 end tell
                 click button 1
-            end tell
+            end
+            repeat until not exists window 1
+                delay 0.1
+            end repeat
         end tell
     end tell
 end run
