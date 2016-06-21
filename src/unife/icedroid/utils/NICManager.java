@@ -3,7 +3,13 @@ package unife.icedroid.utils;
 import unife.icedroid.utils.OSDetector.*;
 import unife.icedroid.exceptions.*;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+
+import javax.script.*;
+
 
 public class NICManager {
     
@@ -24,7 +30,24 @@ public class NICManager {
         		throw new WifiAdhocImpossibleToEnable("Ad-hoc networking mode " +
         				"not yet supported for Windows OS");
 			case MAC:
+				// Call Applescript interpreter
+				String[] args = {"/usr/bin/osascript", "enableWiFiAdHoc", s.getNetworkESSID()}; 
+				Utils.rootExec(args);
+				break;
+				/*
+				InputStream is = NICManager.class.getClassLoader().getResourceAsStream("enableWiFiAdHoc");
+		        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+				ScriptEngineManager mgr = new ScriptEngineManager();
+		        ScriptEngine engine = mgr.getEngineByName("AppleScriptEngine");
+		        ScriptContext context = engine.getContext();
+
+				Bindings bindings = context.getBindings(ScriptContext.ENGINE_SCOPE);
+				bindings.put("javax_script_function", "run");
+				bindings.put(ScriptEngine.ARGV, s.getNetworkESSID());
+
+		        engine.eval(br, context);
         		break;
+        		*/
         	case LINUX:
     			//Check if the NIC is already in ad-hoc mode
 	            if (checkWirelessInterfaceStatus(s, "Mode:Ad-Hoc", "ESSID:\"" + s.getNetworkESSID() + "\"")) {
