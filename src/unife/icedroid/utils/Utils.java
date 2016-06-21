@@ -9,11 +9,31 @@ import java.util.ArrayList;
 public class Utils {
     private final static String TAG = "Utils";
     private final static boolean DEBUG = true;
-
+    
     public static ArrayList<String> rootExec(String command) throws CommandImpossibleToRun, Exception {
     	if (command.equals("")) {
     		throw new CommandImpossibleToRun("Empty command string");
     	}
+
+    	String[] commands = {command};
+    	return rootExec(commands);
+    }
+
+    public static ArrayList<String> rootExec(String[] commands) throws CommandImpossibleToRun, Exception {
+    	boolean ok = false;
+    	if (commands.length == 0) {
+    		throw new CommandImpossibleToRun("Empty command string");
+    	}
+    	for (String string : commands) {
+			if (!string.equals("")) {
+				ok = true;
+				break;
+			}
+		}
+    	if (!ok) {
+    		throw new CommandImpossibleToRun("Empty command string");
+    	}
+
     	
         Process interactiveShell = null;
         BufferedReader input = null;
@@ -22,6 +42,7 @@ public class Utils {
         String su = "su";
         ArrayList<String> results = new ArrayList<>();
         String line = null;
+        String commandToRun = "";
 
         try {
             //Invoke the interactive shell
@@ -31,7 +52,10 @@ public class Utils {
             error = new BufferedReader(new InputStreamReader(interactiveShell.getErrorStream()));
 
             //Run the command
-            output.println(command);
+            for (String command : commands) {
+            	commandToRun += command + " ";
+			};
+			output.println(commandToRun);
             output.println("exit");
             output.flush();
             interactiveShell.waitFor();
@@ -57,7 +81,7 @@ public class Utils {
             String msg = ex.getMessage();
             if (DEBUG) {
             	msg = (msg != null) ? TAG + ": " + msg : TAG + ": " + 
-            		"rootExec() - impossible to run the command: " + command;
+            		"rootExec() - impossible to run the command: " + commandToRun;
             	System.out.println(msg);
             }
             
