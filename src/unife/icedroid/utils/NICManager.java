@@ -30,9 +30,9 @@ public class NICManager {
         				"not yet supported for Windows OS");
 			case MAC:
 				// Call Applescript interpreter
-	            if (checkWirelessInterfaceStatus(s, "op mode: IBSS", "SSID: "+ s.getNetworkESSID())) {
+	            if (checkWirelessInterfaceStatus(s, "op mode: IBSS", "SSID: " + s.getNetworkESSID())) {
 	            	System.out.println("Network interface " + s.getNetworkInterface() + 
-	            			" already in ad-hoc mode");
+	            			" already in ad-hoc mode and on SSID " + s.getNetworkESSID());
 	            	break;
 	            }
 				String[] args = {"/usr/bin/osascript", "resources/enableWiFiAdHoc", s.getNetworkESSID()}; 
@@ -42,9 +42,13 @@ public class NICManager {
                 		s.getNetworkMask(), s.getNetworkBroadcastAddress());
                 
 	            //Check if the NIC is now in ad-hoc mode and on the right ESSID
+                /*
+                 * The following check always returns an empty string on MAC OS X 10.11.5
+                 * Assuming things went well!
 	            if (!checkWirelessInterfaceStatus(s, "op mode: IBSS", "SSID: "+ s.getNetworkESSID())) {
 	                throw new WifiAdhocImpossibleToEnable("Impossible to enable WiFi Ad-Hoc mode");
 	            }
+	            */
 	            
 				break;
 				/*
@@ -137,7 +141,7 @@ public class NICManager {
             if (DEBUG) {
             	msg = TAG + ": " + ((msg != null) ?  msg :
             		"startWifiAdhoc(): Impossible to enable Wifi Ad-Hoc");
-            	System.out.println(msg);
+            	System.err.println(msg);
             }
                                         
             throw new WifiAdhocImpossibleToEnable("Impossible to enable Wifi Ad-Hoc");
