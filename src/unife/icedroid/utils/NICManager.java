@@ -30,11 +30,22 @@ public class NICManager {
         				"not yet supported for Windows OS");
 			case MAC:
 				// Call Applescript interpreter
+	            if (checkWirelessInterfaceStatus(s, "op mode: IBSS", "SSID: "+ s.getNetworkESSID())) {
+	            	System.out.println("Network interface " + s.getNetworkInterface() + 
+	            			" already in ad-hoc mode");
+	            	break;
+	            }
 				String[] args = {"/usr/bin/osascript", "resources/enableWiFiAdHoc", s.getNetworkESSID()}; 
 				Utils.rootExec(args);
 				
                 configureNICIPAddress (s.getNetworkInterface(), s.getHostIP(),
                 		s.getNetworkMask(), s.getNetworkBroadcastAddress());
+                
+	            //Check if the NIC is now in ad-hoc mode and on the right ESSID
+	            if (!checkWirelessInterfaceStatus(s, "op mode: IBSS", "SSID: "+ s.getNetworkESSID())) {
+	                throw new WifiAdhocImpossibleToEnable("Impossible to enable WiFi Ad-Hoc mode");
+	            }
+	            
 				break;
 				/*
 				InputStream is = NICManager.class.getClassLoader().getResourceAsStream("enableWiFiAdHoc");
@@ -118,7 +129,7 @@ public class NICManager {
         	
 	            //Check if the NIC is now in ad-hoc mode and on the right ESSID
 	            if (!checkWirelessInterfaceStatus(s, "Mode:Ad-Hoc", "ESSID:\"" + s.getNetworkESSID() + "\"")) {
-	                throw new WifiAdhocImpossibleToEnable("Impossible to enable Wifi Ad-Hoc");
+	                throw new WifiAdhocImpossibleToEnable("Impossible to enable WiFi Ad-Hoc mode");
 	            }
         	}
         } catch(Exception ex) {
@@ -172,13 +183,14 @@ public class NICManager {
         	OS osHost = osDetector.getOSName();
         	
             switch (osHost) {
-			case UNKNOWN:
-        		throw new WifiAdhocImpossibleToEnable("Impossible to set up ad-hoc networking " +
-        				"mode: unknown OS");
-        	case WINDOWS:
-        		throw new WifiAdhocImpossibleToEnable("Ad-hoc networking mode " +
-        				"not yet supported for Windows OS");
 			case MAC:
+				// Bring down and up the NIC, to restore the system-default network settings
+            	cmd = "ifconfig " + s.getNetworkInterface() + " down";
+                Utils.rootExec(cmd);
+
+            	cmd = "ifconfig " + s.getNetworkInterface() + " up";
+                Utils.rootExec(cmd);
+                
         		break;
         	case LINUX:
         		switch (osDetector.getLinuxDistribution()) {
@@ -188,24 +200,31 @@ public class NICManager {
         		case UNKNOWN:
         			System.err.println("Unknown Linux distribution; assuming a systemd-compliant system");
         		case RED_HAT:
-	            	// Enable network-manager
+	            	// Re-enable network-manager
                 	cmd = "systemctl enable NetworkManager.service";
                 	try {
                 		Utils.rootExec(cmd);
                 	} catch (CommandImpossibleToRun citr) {}
                 	
-	            	// Turn on network-manager
+	            	// Turn on again the NetworkManager
                 	cmd = "systemctl start NetworkManager.service";
                     Utils.rootExec(cmd);
                     
 	                break;
         		case UBUNTU:
-                    //Turn on network-manager
+                    //Turn on again the network-manager
                 	cmd = "start network-manager";
                     Utils.rootExec(cmd);
 	                
 	                break;
         		}
+        		break;
+        	case WINDOWS:
+        		throw new WifiAdhocImpossibleToEnable("Ad-hoc networking mode " +
+        				"not yet supported for Windows OS");
+			case UNKNOWN:
+        		throw new WifiAdhocImpossibleToEnable("Impossible to set up ad-hoc networking " +
+        				"mode: unknown OS");
         	}
         } catch (Exception ex) {
             String msg = ex.getMessage();
@@ -218,23 +237,65 @@ public class NICManager {
         }
     }
 
-    private static boolean checkWirelessInterfaceStatus(Settings s, String... fields) {
+    private static boolean checkWirelessInterfaceStatus(Settings s, String... fields)
+    		throws UnsupportedOSException {
         String cmd;
-        cmd = "iwconfig " + s.getNetworkInterface();
-        try {
-            ArrayList<String> results = Utils.exec(cmd);
-            for (String f : fields) {
-                if (!containsSubstring(results, f)) {
-                    return false;
-                }
-            }
-        } catch (Exception ex) {}
-        return true;
+    	OS osHost = osDetector.getOSName();
+    	
+        switch (osHost) {
+		case MAC:
+	        cmd = "airport -I " + s.getNetworkInterface();
+	        try {
+	            ArrayList<String> results = Utils.exec(cmd);
+	            for (String f : fields) {
+	                if (!containsSubstring(results, f)) {
+	                    return false;
+	                }
+	            }
+	        } catch (Exception ex) {
+	        	String msg = ex.getMessage();
+	            if (DEBUG) {
+	            	msg = TAG + ": " + ((msg != null) ?  msg :
+	            		"stopWifiAdhoc(): Impossible to disable Wifi Ad-Hoc");
+	            	System.out.println(msg);
+	            }
+	        }
+	        return true;
+		case LINUX:
+	        cmd = "iwconfig " + s.getNetworkInterface();
+	        try {
+	            ArrayList<String> results = Utils.exec(cmd);
+	            for (String f : fields) {
+	                if (!containsSubstring(results, f)) {
+	                    return false;
+	                }
+	            }
+	        } catch (Exception ex) {
+	        	String msg = ex.getMessage();
+	            if (DEBUG) {
+	            	msg = TAG + ": " + ((msg != null) ?  msg :
+	            		"stopWifiAdhoc(): Impossible to disable Wifi Ad-Hoc");
+	            	System.out.println(msg);
+	            }
+	        }
+	        return true;
+    	case WINDOWS:
+    		throw new UnsupportedOSException("Impossible to check wireless status: " +
+    				"Windows OS not yet supported");
+		case UNKNOWN:
+    		throw new UnsupportedOSException("Impossible to check wireless status for unknown OS");
+        }
+        
+        return false;
     }
 
     private static boolean containsSubstring (ArrayList<String> results, String substring) {
         for (String line : results) {
+        	if (DEBUG) {
+        		System.out.println(line);
+        	}
             if (line.contains(substring)) {
+            	System.out.println("TRUE " + substring);
                 return true;
             }
         }
