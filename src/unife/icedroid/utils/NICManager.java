@@ -35,7 +35,7 @@ public class NICManager {
 	            			" already in ad-hoc mode and on SSID " + s.getNetworkESSID());
 	            	break;
 	            }
-				cmd = "/usr/bin/osascript resources/enableWiFiAdHoc " + s.getNetworkESSID(); 
+				cmd = "/usr/bin/osascript resources/enableWiFiAdHoc " + s.getNetworkESSID() + " " + s.getNetworkChannel(); 
 				Utils.exec(cmd);
 				
                 configureNICIPAddress (s.getNetworkInterface(), s.getHostIP(),
