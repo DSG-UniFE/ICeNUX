@@ -2,6 +2,7 @@ package unife.icedroid.utils;
 
 import unife.icedroid.exceptions.CommandImpossibleToRun;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -111,7 +112,7 @@ public class Utils {
         return results;
     }
 
-    public static ArrayList<String> exec(String commandToRun) throws CommandImpossibleToRun {
+    public static ArrayList<String> exec(String commandToRun) throws CommandImpossibleToRun, IOException {
         Process process = null;
         BufferedReader input = null;
         BufferedReader error = null;
@@ -155,8 +156,24 @@ public class Utils {
             }
             
             throw new CommandImpossibleToRun("Impossible to run the command " + commandToRun);
+        } finally {
+        	input.close();
+        	error.close();
         }
 
         return results;
+    }
+
+    public static boolean containsSubstring (ArrayList<String> results, String substring) {
+        for (String line : results) {
+        	if (DEBUG) {
+        		System.out.println(line);
+        	}
+            if (line.contains(substring)) {
+            	System.out.println("TRUE " + substring);
+                return true;
+            }
+        }
+        return false;
     }
 }

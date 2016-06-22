@@ -35,11 +35,17 @@ public class NICManager {
 	            			" already in ad-hoc mode and on SSID " + s.getNetworkESSID());
 	            	break;
 	            }
-				String[] args = {"/usr/bin/osascript", "resources/enableWiFiAdHoc", s.getNetworkESSID()}; 
-				Utils.rootExec(args);
+				cmd = "/usr/bin/osascript resources/enableWiFiAdHoc " + s.getNetworkESSID(); 
+				Utils.exec(cmd);
 				
                 configureNICIPAddress (s.getNetworkInterface(), s.getHostIP(),
                 		s.getNetworkMask(), s.getNetworkBroadcastAddress());
+                
+	            if (checkWirelessInterfaceStatus(s, "op mode: IBSS", "SSID: " + s.getNetworkESSID())) {
+	            	System.out.println("Network interface " + s.getNetworkInterface() + 
+	            			" already in ad-hoc mode and on SSID " + s.getNetworkESSID());
+	            	break;
+	            }
                 
 	            //Check if the NIC is now in ad-hoc mode and on the right ESSID
                 /*
@@ -252,7 +258,7 @@ public class NICManager {
 	        try {
 	            ArrayList<String> results = Utils.exec(cmd);
 	            for (String f : fields) {
-	                if (!containsSubstring(results, f)) {
+	                if (!Utils.containsSubstring(results, f)) {
 	                    return false;
 	                }
 	            }
@@ -270,7 +276,7 @@ public class NICManager {
 	        try {
 	            ArrayList<String> results = Utils.exec(cmd);
 	            for (String f : fields) {
-	                if (!containsSubstring(results, f)) {
+	                if (!Utils.containsSubstring(results, f)) {
 	                    return false;
 	                }
 	            }
@@ -290,19 +296,6 @@ public class NICManager {
     		throw new UnsupportedOSException("Impossible to check wireless status for unknown OS");
         }
         
-        return false;
-    }
-
-    private static boolean containsSubstring (ArrayList<String> results, String substring) {
-        for (String line : results) {
-        	if (DEBUG) {
-        		System.out.println(line);
-        	}
-            if (line.contains(substring)) {
-            	System.out.println("TRUE " + substring);
-                return true;
-            }
-        }
         return false;
     }
 
