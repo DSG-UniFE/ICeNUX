@@ -41,12 +41,6 @@ public class NICManager {
                 configureNICIPAddress (s.getNetworkInterface(), s.getHostIP(),
                 		s.getNetworkMask(), s.getNetworkBroadcastAddress());
                 
-	            if (checkWirelessInterfaceStatus(s, "op mode: IBSS", "SSID: " + s.getNetworkESSID())) {
-	            	System.out.println("Network interface " + s.getNetworkInterface() + 
-	            			" already in ad-hoc mode and on SSID " + s.getNetworkESSID());
-	            	break;
-	            }
-                
 	            //Check if the NIC is now in ad-hoc mode and on the right ESSID
                 /*
                  * The following check always returns an empty string on MAC OS X 10.11.5
