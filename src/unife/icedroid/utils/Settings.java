@@ -1,5 +1,6 @@
 package unife.icedroid.utils;
 
+import unife.icedroid.exceptions.RoutingAlgorithmNotFound;
 import unife.icedroid.services.ApplevDisseminationChannelService;
 import unife.icedroid.services.HelloMessageService;
 import unife.icedroid.services.BroadcastReceiveThread;
@@ -101,6 +102,10 @@ public class Settings {
                     case "RoutingAlgorithm":
                         if (setting[2].equals("SprayAndWait")) {
                             routingAlgorithm = RoutingAlgorithm.SPRAY_AND_WAIT;
+                        }
+                        else {
+                        	throw new RoutingAlgorithmNotFound("Specified routing algorithm " +
+                        			setting[2] + " not supported");
                         }
                         break;
                     case "CacheSize":
