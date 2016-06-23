@@ -72,4 +72,5 @@ gradle-app.setting
 
 # Project-specific
 /resources/conversations/**
-/resources/subscriptions
+/resources/subscriptions.txt
+/resources/channels.txt
