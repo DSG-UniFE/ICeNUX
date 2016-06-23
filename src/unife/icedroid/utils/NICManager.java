@@ -83,7 +83,7 @@ public class NICManager {
 	            	cmd = "systemctl disable NetworkManager.service";
 	            	try {
 	            		Utils.rootExec(cmd);
-	            	} catch (CommandImpossibleToRun citr) {}
+	            	} catch (TerminalCommandError citr) {}
 	                
 	            	cmd = "systemctl stop NetworkManager.service";
 	                Utils.rootExec(cmd);
@@ -150,7 +150,7 @@ public class NICManager {
 
 	private static void configureNICIPAddress(String networkInterface, String hostIP,
 			String networkMask, String networkBroadcastAddress)
-					throws UnsupportedOSException, CommandImpossibleToRun {
+					throws UnsupportedOSException, TerminalCommandError {
 		String cmd = null;
 		OS osHost = osDetector.getOSName();
     	switch (osHost) {
@@ -176,7 +176,7 @@ public class NICManager {
             		"Impossible to set an address for the NIC " + networkInterface);
             	System.err.println(msg);
                 
-                throw new CommandImpossibleToRun("Error running the following command: " + cmd);
+                throw new TerminalCommandError("Error running the following command: " + cmd);
         }
 		
 	}
@@ -208,7 +208,7 @@ public class NICManager {
                 	cmd = "systemctl enable NetworkManager.service";
                 	try {
                 		Utils.rootExec(cmd);
-                	} catch (CommandImpossibleToRun citr) {}
+                	} catch (TerminalCommandError citr) {}
                 	
 	            	// Turn on again the NetworkManager
                 	cmd = "systemctl start NetworkManager.service";
@@ -294,7 +294,7 @@ public class NICManager {
     }
 
 	public static boolean isIPAvailable(String networkInterface, String address)
-			throws UnsupportedOSException, CommandImpossibleToRun {
+			throws UnsupportedOSException, TerminalCommandError {
 		ArrayList<String> commandResults = null;
         String cmd = "arping -I " + networkInterface + " -D -c " + ARP_PROBES_NUM + " " + address;
         try {
@@ -304,9 +304,9 @@ public class NICManager {
             if (DEBUG) {
             	msg = TAG + ": " + ((msg != null) ?  msg :
             		"isIPAvailable(): Impossible to get results from the arping command");
-            	System.out.println(msg);
+            	System.err.println(msg);
             }
-            throw new CommandImpossibleToRun("Failed execution of the arping command");
+            throw new TerminalCommandError("Execution of the arping command failed");
 	    }
         
     	String arpingRes = commandResults.remove(commandResults.size() - 1).toLowerCase();
@@ -324,7 +324,7 @@ public class NICManager {
 			break;
 		case UNKNOWN:
 		case WINDOWS:
-			throw new UnsupportedOSException("arping not supported for " + osHost + " OS");
+			throw new UnsupportedOSException("arping command not supported for " + osHost + " OS");
     	}
 
 		return false;

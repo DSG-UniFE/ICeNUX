@@ -1,6 +1,6 @@
 package unife.icedroid.utils;
 
-import unife.icedroid.exceptions.CommandImpossibleToRun;
+import unife.icedroid.exceptions.TerminalCommandError;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,19 +11,19 @@ public class Utils {
     private final static String TAG = "Utils";
     private final static boolean DEBUG = true;
     
-    public static ArrayList<String> rootExec(String command) throws CommandImpossibleToRun, Exception {
+    public static ArrayList<String> rootExec(String command) throws TerminalCommandError, IOException {
     	if (command.equals("")) {
-    		throw new CommandImpossibleToRun("Empty command string");
+    		throw new TerminalCommandError("Empty command string");
     	}
 
     	String[] commands = {command};
     	return rootExec(commands);
     }
 
-    public static ArrayList<String> rootExec(String[] commands) throws CommandImpossibleToRun, Exception {
+    public static ArrayList<String> rootExec(String[] commands) throws TerminalCommandError, IOException {
     	boolean ok = false;
     	if (commands.length == 0) {
-    		throw new CommandImpossibleToRun("Empty command string");
+    		throw new TerminalCommandError("Empty command string");
     	}
     	for (String string : commands) {
 			if (!string.equals("")) {
@@ -32,7 +32,7 @@ public class Utils {
 			}
 		}
     	if (!ok) {
-    		throw new CommandImpossibleToRun("Empty command string");
+    		throw new TerminalCommandError("Empty command string");
     	}
 
     	
@@ -72,7 +72,7 @@ public class Utils {
 	            		System.err.println(line);
 	            	} while ((line = error.readLine()) != null);
             	}
-                throw new CommandImpossibleToRun();
+                throw new TerminalCommandError();
             }
             //Check to save some outputs
             while ((line = input.readLine()) != null) {
@@ -81,28 +81,29 @@ public class Utils {
             		System.out.println(line);
             	}
             }
-
-        } catch (CommandImpossibleToRun citr) {
-            String msg = citr.getMessage();
+        } catch (TerminalCommandError tcerr) {
+        	throw tcerr;
+        } catch (IOException ioex) {
+            String msg = ioex.getMessage();
             if (DEBUG) {
             	msg = TAG + ": " + ((msg != null) ? msg : 
-            		"rootExec() - impossible to run the command: " + commandToRun);
+            		"rootExec() - error reading results of the command: " + commandToRun);
             	System.err.println(msg);
             }
-    		System.err.println("Errors detected after running command " + commandToRun);
-        	throw citr;
-        } catch (Exception ex) {
-            String msg = ex.getMessage();
-            if (DEBUG) {
-            	msg = TAG + ": " + ((msg != null) ? msg : 
-            		"rootExec() - impossible to run the command: " + commandToRun);
-            	System.err.println(msg);
-            }
-    		System.err.println("General error detected after running command " + commandToRun);
-            throw ex;
+            throw ioex;
         }
+        catch (InterruptedException iex) {
+            String msg = iex.getMessage();
+            if (DEBUG) {
+            	msg = TAG + ": " + ((msg != null) ? msg :
+            		"rootExec() - error reading results of the command: " + commandToRun);
+            	System.err.println(msg);
+            }
+            throw new TerminalCommandError("Interrupted Exception raised while waiting for " + 
+            		"the interactive shell to finish running jobs");
+		}
         finally {
-            //Close all
+            //Close all streams
             input.close();
             output.close();
             error.close();
@@ -112,7 +113,7 @@ public class Utils {
         return results;
     }
 
-    public static ArrayList<String> exec(String commandToRun) throws CommandImpossibleToRun, IOException {
+    public static ArrayList<String> exec(String commandToRun) throws TerminalCommandError, IOException {
         Process process = null;
         BufferedReader input = null;
         BufferedReader error = null;
@@ -136,7 +137,7 @@ public class Utils {
 	            		System.err.println(line);
 	            	} while ((line = error.readLine()) != null);
             	}
-                throw new CommandImpossibleToRun();
+                throw new TerminalCommandError();
             }
 
             //Check to save some outputs
@@ -146,16 +147,16 @@ public class Utils {
             		System.out.println(line);
             	}
             }
-
-        } catch (Exception ex) {
-            String msg = ex.getMessage();
+        } catch (TerminalCommandError tcerr) {
+        	throw tcerr;
+        } catch (IOException ioex) {
+            String msg = ioex.getMessage();
             if (DEBUG) {
             	msg = TAG + ": " + ((msg != null) ? msg : 
-            		"exec() - impossible to run the command: " + commandToRun);
+            		"exec() - error reading results of the command: " + commandToRun);
 	            System.err.println(msg);
             }
-            
-            throw new CommandImpossibleToRun("Impossible to run the command " + commandToRun);
+            throw ioex;
         } finally {
         	input.close();
         	error.close();
