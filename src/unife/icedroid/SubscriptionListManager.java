@@ -35,12 +35,8 @@ public class SubscriptionListManager {
         } catch (Exception ex) {
             String msg = ex.getMessage();
             if (DEBUG) {
-            	if (msg != null) {
-            		msg = TAG + ": " + msg;
-            	} else {
-            		msg = TAG + ": " + "Error loading subscriptions list";
-            	}
-            	System.out.println(msg);
+            	msg = TAG + ": " + ((msg != null) ? msg : "Error loading subscriptions list");
+            	System.err.println(msg);
             }
         }
     }
@@ -86,12 +82,8 @@ public class SubscriptionListManager {
             } catch (Exception ex) {
                 String msg = ex.getMessage();
                 if (DEBUG) {
-                	if (msg != null) {
-                		msg = TAG + ": " + msg;
-                	} else {
-                		msg = TAG + ": " + "Error subscribing";
-                	}
-                	System.out.println(msg);
+                	msg = TAG + ": " + ((msg != null) ? msg : "Error subscribing");
+                	System.err.println(msg);
                 }
             }
         }
