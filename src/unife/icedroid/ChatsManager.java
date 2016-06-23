@@ -14,8 +14,7 @@ public class ChatsManager implements OnMessageReceiveListener {
 
     private static volatile ChatsManager instance;
 
-    private ChatsManager() {
-    }
+    private ChatsManager() {}
 
     public static synchronized ChatsManager getInstance() {
         if (instance == null) {
