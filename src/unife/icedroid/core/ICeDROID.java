@@ -5,24 +5,25 @@ import unife.icedroid.core.managers.ChannelListManager;
 import unife.icedroid.core.managers.MessageQueueManager;
 import unife.icedroid.core.managers.NeighborhoodManager;
 import unife.icedroid.core.routingalgorithms.RoutingAlgorithm;
-import unife.icedroid.core.routingalgorithms.SprayAndWaitThread;
+import unife.icedroid.core.routingalgorithms.RoutingAlgorithmFactory;
 import unife.icedroid.utils.Settings;
 
 public class ICeDROID {
-    private static ICeDROID instance;
+    private static ICeDROID instance = null;
 
     private ChannelListManager channelListManager;
     private NeighborhoodManager neighborhoodManager;
     private MessageQueueManager messageQueueManager;
     private RoutingAlgorithm routingAlgorithm;
+    private Settings icedroidSettings;
 
     private ICeDROID(OnMessageReceiveListener listener) throws Exception {
-        if (Settings.getSettings(listener) != null) {
+        if ((icedroidSettings = Settings.getSettings(listener)) != null) {
             channelListManager = ChannelListManager.getChannelListManager();
             neighborhoodManager = NeighborhoodManager.getNeighborhoodManager();
             messageQueueManager = MessageQueueManager.getMessageQueueManager();
         } else {
-            throw new Exception();
+            throw new Exception("Impossible to retrieve instance of the Settings class");
         }
     }
 
@@ -50,20 +51,19 @@ public class ICeDROID {
     }
 
     public void send(ICeDROIDMessage message) {
-        switch (Settings.getSettings().getRoutingAlgorithm()) {
-        case SPRAY_AND_WAIT:
-            boolean added = false;
-            while (!added) {
-                try {
-                    added = routingAlgorithm.addMessageForTransmission(message);
-                } catch (Exception ex) {}
-
-                if (!added) {
-                	routingAlgorithm = new SprayAndWaitThread();
-                	((Thread) routingAlgorithm).start();
-                }
+    	if (routingAlgorithm == null) {
+    		routingAlgorithm = RoutingAlgorithmFactory.makeRoutingAlgorithm(
+    				icedroidSettings.getRoutingAlgorithm());
+        	((Thread) routingAlgorithm).start();
+    	}
+    	boolean added = false;
+        while (!added) {
+            added = routingAlgorithm.addMessageForTransmission(message);
+            if (!added) {
+            	routingAlgorithm = RoutingAlgorithmFactory.makeRoutingAlgorithm(
+            			icedroidSettings.getRoutingAlgorithm());
+            	((Thread) routingAlgorithm).start();
             }
-            break;
         }
     }
 
