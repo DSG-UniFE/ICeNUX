@@ -36,7 +36,7 @@ public class ChatsManager implements OnMessageReceiveListener {
         String path = Constants.CONVERSATIONS_PATH + subscription.getSubscriptionFileName();
         File conversationLogFile = new File (path);
         if (!conversationLogFile.exists()) {
-        	if (!conversationLogFile.mkdirs()) {
+        	if (!conversationLogFile.getParentFile().mkdirs()) {
         		throw new IOException("failed to create the path " + path);
         	}
         	conversationLogFile.createNewFile();
@@ -49,12 +49,8 @@ public class ChatsManager implements OnMessageReceiveListener {
         } catch (Exception ex) {
             String msg = ex.getMessage();
             if (DEBUG) {
-            	if (msg != null) {
-            		msg = TAG + ": " + msg;
-            	} else {
-            		msg = TAG + ": " + "Error writing to file";
-            	}
-            	System.out.println(msg);
+            	msg = TAG + ": " + ((msg != null) ? msg : "Error writing to file");
+            	System.err.println(msg);
             }
         }
     }
