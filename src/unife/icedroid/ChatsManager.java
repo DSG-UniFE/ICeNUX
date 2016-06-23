@@ -1,8 +1,12 @@
 package unife.icedroid;
 
 import unife.icedroid.core.ICeDROIDMessage;
+import unife.icedroid.resources.Constants;
 import unife.icedroid.services.ApplevDisseminationChannelService.OnMessageReceiveListener;
+
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class ChatsManager implements OnMessageReceiveListener {
     private static final String TAG = "ChatsManager";
@@ -24,13 +28,20 @@ public class ChatsManager implements OnMessageReceiveListener {
         return instance;
     }
 
-    public synchronized void saveMessageInConversation(TxtMessage message) {
+    public synchronized void saveMessageInConversation(TxtMessage message) throws IOException {
         String data = "[" + message.getReceptionTime().toString() + "] " +
                         message.getHostID() + ": " +
                         message.getContentData() + "\n";
 
         Subscription subscription = new Subscription(message.getChannel(), message.getGroup());
-        String path = "resources/conversations/" + subscription.toString();
+        String path = Constants.CONVERSATIONS_PATH + subscription.getSubscriptionFileName();
+        File conversationLogFile = new File (path);
+        if (!conversationLogFile.exists()) {
+        	if (!conversationLogFile.mkdirs()) {
+        		throw new IOException("failed to create the path " + path);
+        	}
+        	conversationLogFile.createNewFile();
+        }
 
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(path, true);
@@ -56,6 +67,8 @@ public class ChatsManager implements OnMessageReceiveListener {
                 saveMessageInConversation(txt);
             }
         } catch (Exception ex) {
+        	System.err.println(TAG + ": error receiving the message with ID " +
+        			message.getMsgID() + " of size " + message.getSize());
         }
     }
 }
