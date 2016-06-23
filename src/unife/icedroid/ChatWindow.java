@@ -1,6 +1,8 @@
 package unife.icedroid;
 
 import unife.icedroid.core.ICeDROID;
+import unife.icedroid.resources.Constants;
+
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.Dimension;
@@ -10,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
@@ -29,6 +32,7 @@ import javax.swing.JScrollPane;
 import javax.swing.DefaultListModel;
 
 public class ChatWindow {
+    private static final String TAG = "ChatWindow";
 	
 	public static void open(final Subscription subscription) {
 		EventQueue.invokeLater(new Runnable() {
@@ -46,7 +50,7 @@ public class ChatWindow {
 		window.setSize(400, 500);
 		window.setResizable(false);
 		
-		final DefaultListModel<String> listData = loadMessages(subscription.toString());
+		final DefaultListModel<String> listData = loadMessagesForSubscription(subscription);
 		JList<String> list = new JList<String>(listData);
 		JScrollPane listContainer = new JScrollPane(list);
 		listContainer.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -58,7 +62,7 @@ public class ChatWindow {
 		panel.setLayout(layout);
 		final JTextField text = new JTextField(25);
 		text.setMaximumSize(new Dimension(1000, 1000));
-		JButton send = new JButton("Invia");
+		JButton send = new JButton("Send");
 		send.addActionListener(new ActionListener() {
 			
 			@Override
@@ -66,10 +70,13 @@ public class ChatWindow {
 				String msg = text.getText();
 		        if (!msg.equals("")) {
 		            text.setText(null);
-		            		            
 		            TxtMessage message = new TxtMessage(subscription, msg);
-		            ChatsManager.getInstance().saveMessageInConversation(message);
-
+		            try {
+			            ChatsManager.getInstance().saveMessageInConversation(message);
+		            }
+		            catch (IOException ioex) {
+		            	System.err.println(TAG + ": " + ioex.getMessage());
+		            }
 		            ICeDROID.getInstance().send(message);
 		        }
 			}
@@ -78,6 +85,7 @@ public class ChatWindow {
 		panel.add(text);
 		panel.add(send);
 		window.add(panel, BorderLayout.SOUTH);
+		window.getRootPane().setDefaultButton(send);
 		
 		window.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		window.setVisible(true);
@@ -86,7 +94,7 @@ public class ChatWindow {
 			
 			@Override
 			protected Void doInBackground() {
-				Path conversationsDir = Paths.get("resources/conversations/");
+				Path conversationsDir = Paths.get(Constants.CONVERSATIONS_PATH);
 				
 				try {
 					WatchService watcher = conversationsDir.getFileSystem().newWatchService();
@@ -96,13 +104,13 @@ public class ChatWindow {
 						WatchKey wk = watcher.take();
 						for (WatchEvent<?> event : wk.pollEvents()) {
 							Path file = (Path) event.context();
-							if (file.endsWith(subscription.toString())) {
+							if (file.endsWith(subscription.getSubscriptionFileName())) {
 					            try {
-					            	String conversationFileName = "resources/conversations/" + subscription.toString();
-					                BufferedReader br = new BufferedReader(
-					                		new FileReader(conversationFileName));
-					                ArrayList<String> previousMessages = new ArrayList<>(0);
-					                String msg;
+					            	String conversationFileName = Constants.CONVERSATIONS_PATH +
+					            			subscription.getSubscriptionFileName();
+					                BufferedReader br = new BufferedReader(new FileReader(conversationFileName));
+					                ArrayList<String> previousMessages = new ArrayList<String>(0);
+					                String msg = null;
 					                while ((msg = br.readLine()) != null) {
 					                    previousMessages.add(msg);
 					                }
@@ -146,11 +154,11 @@ public class ChatWindow {
 		});
 	}
 	
-	private static DefaultListModel<String> loadMessages(String fileName) {
+	private static DefaultListModel<String> loadMessagesForSubscription(Subscription subscription) {
 		DefaultListModel<String> listData = new DefaultListModel<String>();
 
         try {
-        	fileName = "resources/conversations/" + fileName;
+        	String fileName = Constants.CONVERSATIONS_PATH + subscription.getSubscriptionFileName();
             BufferedReader br = new BufferedReader(new FileReader(fileName));
             String line;
             while ((line = br.readLine()) != null) {

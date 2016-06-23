@@ -1,5 +1,6 @@
 package unife.icedroid;
 
+import unife.icedroid.UIElements.GhostText;
 import unife.icedroid.core.Intent;
 import java.awt.EventQueue;
 import java.awt.BorderLayout;
@@ -9,6 +10,8 @@ import java.awt.Dialog;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.ActionEvent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -74,7 +77,7 @@ public class ICeNUXWindow {
 			public void actionPerformed(ActionEvent e) {
 				final JDialog dialog = new JDialog(window, Dialog.ModalityType.APPLICATION_MODAL);
 				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-				dialog.setTitle("Crea Chat");
+				dialog.setTitle("Create a new Chat Group");
 				dialog.setLocationRelativeTo(window);
 				
 				JPanel panel = new JPanel();
@@ -82,19 +85,24 @@ public class ICeNUXWindow {
 				panel.setLayout(layout);
 				
 				final JTextField channel = new JTextField(25);
-				channel.setText("Nome del canale");
+				new GhostText(channel, "ADC Name");
 				final JTextField group = new JTextField(25);
-				group.setText("Nome del gruppo");
+				new GhostText(group, "Group (Application) Name");
+				JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 				panel.add(channel);
 				panel.add(group);
+				panel.add(buttonsPanel);
 				
-				JButton save = new JButton("Salva");
-				save.addActionListener(new ActionListener() {
+				
+				JButton createButton = new JButton("Create");
+				createButton.addActionListener(new ActionListener() {
 					
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						String channelID = channel.getText();
+						channelID = channelID.replace(' ', '_');
 				        String groupName = group.getText();
+				        groupName = groupName.replace(' ', '_');
 				        Subscription subscription = SubscriptionListManager.
 				        						getSubscriptionListManager().
 				        						subscribe(channelID, groupName);
@@ -107,8 +115,21 @@ public class ICeNUXWindow {
 					
 				});
 				
+				JButton cancelButton = new JButton("Cancel");
+				cancelButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						dialog.setVisible(false);
+						dialog.dispatchEvent(new WindowEvent(dialog, WindowEvent.WINDOW_CLOSING));
+					}
+					
+				});
+				
+				buttonsPanel.add(cancelButton);
+				buttonsPanel.add(createButton);
+
 				dialog.add(panel, BorderLayout.CENTER);
-				dialog.add(save, BorderLayout.SOUTH);
+				dialog.getRootPane().setDefaultButton(createButton);
 				dialog.pack();
 				dialog.setResizable(false);
 				dialog.setVisible(true);
