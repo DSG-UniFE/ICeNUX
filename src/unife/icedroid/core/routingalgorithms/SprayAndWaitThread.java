@@ -12,7 +12,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.Condition;
 
-public class SprayAndWaitThread extends Thread {
+public class SprayAndWaitThread extends Thread implements RoutingAlgorithm {
     private static final String TAG = "SprayAndWaitThread";
     private static final boolean DEBUG = true;
 
@@ -136,8 +136,9 @@ public class SprayAndWaitThread extends Thread {
         }
     }
 
-    public boolean add(ICeDROIDMessage msg) {
+    public boolean addMessageForTransmission(ICeDROIDMessage msg) {
         boolean result = false;
+        
         lock.lock();
         if (!stopped) {
             messages.add(msg);
@@ -146,13 +147,30 @@ public class SprayAndWaitThread extends Thread {
             result = true;
         }
         lock.unlock();
+
+        if (DEBUG && result) {
+        	System.out.println(TAG + ": Added message with ID " + msg.getMsgID() + " and size " +
+        			msg.getSize() + " to the queue for transmission");
+        }
+        
         return result;
     }
 
-    public void removeMessage(ICeDROIDMessage msg, int index) {
+    public ICeDROIDMessage removeMessage(ICeDROIDMessage msg, int index) {
+    	ICeDROIDMessage message = null;
+    	
         lock.lock();
-        messages.remove(index);
+        message = messages.remove(index);
         ackLists.remove(index);
         lock.unlock();
+
+        if (DEBUG) {
+        	String info = TAG + ": " + ((message != null) ? "Removed message with ID " +
+        			message.getMsgID() + " and size " + message.getSize() + " from the cache" :
+        				"No message found at index " + index);
+        	System.out.println(info);
+        }
+        
+        return message;
     }
 }
