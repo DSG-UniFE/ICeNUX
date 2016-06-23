@@ -3,17 +3,21 @@ package unife.icedroid.core.managers;
 import unife.icedroid.core.ICeDROIDMessage;
 import unife.icedroid.utils.Settings;
 import unife.icedroid.core.Intent;
+import unife.icedroid.resources.Constants;
+
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+
 
 public class ChannelListManager {
     private static final String TAG = "ChannelListManager";
     private static final boolean DEBUG = true;
     public static final String EXTRA_NEW_CHANNEL = "unife.icedroid.NEW_CHANNEL";
 
-    private static final String channelsFileName = "resources/channels";
     private volatile static ChannelListManager instance = null;
 
     private ArrayList<String> channelList;
@@ -22,7 +26,7 @@ public class ChannelListManager {
     private ChannelListManager() {
         channelList = new ArrayList<>(0);
         try {
-            BufferedReader br = new BufferedReader(new FileReader(channelsFileName));
+            BufferedReader br = new BufferedReader(new FileReader(Constants.CHANNELS_FILE_NAME));
 
             String channel;
             while ((channel = br.readLine()) != null) {
@@ -32,12 +36,8 @@ public class ChannelListManager {
         } catch (Exception ex) {
             String msg = ex.getMessage();
             if (DEBUG) {
-            	if (msg != null) {
-            		msg = TAG + ": " + msg;
-            	} else {
-            		msg = TAG + ": " + "Error loading channel list";
-            	}
-            	System.out.println(msg);
+            	msg = TAG + ": " + ((msg != null) ? msg : "Error loading channel list");
+            	System.err.println(msg);
             }
         }
     }
@@ -57,10 +57,19 @@ public class ChannelListManager {
         if (!channelList.contains(channel)) {
             channelList.add(channel);
             try {
-                FileOutputStream fos = new FileOutputStream(channelsFileName, true);
+            	File conversationLogFile = new File (Constants.CHANNELS_FILE_NAME);
+                if (!conversationLogFile.exists()) {
+                	if (!conversationLogFile.getParentFile().mkdirs()) {
+                		throw new IOException("failed to create the path " + Constants.CHANNELS_FILE_NAME);
+                	}
+                	conversationLogFile.createNewFile();
+                }
+                FileOutputStream fos = new FileOutputStream(Constants.CHANNELS_FILE_NAME, true);
                 fos.write((channel + "\n").getBytes());
                 fos.close();
-                if (DEBUG) System.out.println(TAG + " Attachment to channel: " + channel);
+                if (DEBUG) {
+                	System.out.println(TAG + " Attachment to channel: " + channel);
+                }
 
                 Intent intent = new Intent();
                 intent.putExtra(EXTRA_NEW_CHANNEL, true);
@@ -69,11 +78,7 @@ public class ChannelListManager {
             } catch (Exception ex) {
                 String msg = ex.getMessage();
                 if (DEBUG) {
-                	if (msg != null) {
-                		msg = TAG + ": " + msg;
-                	} else {
-                		msg = TAG + ": " + "Error sticking to channel";
-                	}
+                	msg = TAG + ": " + ((msg != null) ? msg : "Error sticking to channel");
                 	System.out.println(msg);
                 }
             }
