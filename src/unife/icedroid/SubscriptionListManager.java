@@ -61,8 +61,8 @@ public class SubscriptionListManager {
         return instance;
     }
 
-    public synchronized Subscription subscribe(String channel, String group) {
-        Subscription subscription = new Subscription(channel, group);
+    public synchronized Subscription subscribe(String channel, String application) {
+        Subscription subscription = new Subscription(channel, application);
         if (!subscriptionsList.contains(subscription)) {
             subscriptionsList.add(subscription);
 
