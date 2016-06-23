@@ -8,5 +8,6 @@ public class Constants {
     public static final String CONVERSATIONS_PATH = "resources/conversations/";
     
     public static final String ICON_PATH = "/ic_chat.png";
+    public static final String APPLESCRIPT_PATH = "resources/enableWiFiAdHoc";
 
 }
