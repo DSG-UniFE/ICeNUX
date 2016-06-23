@@ -6,6 +6,7 @@ import unife.icedroid.resources.Constants;
 
 import java.awt.EventQueue;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Dimension;
 import java.awt.Dialog;
@@ -72,6 +73,7 @@ public class ICeNUXWindow {
 		JPanel newChatContainer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		java.net.URL imgURL = ICeNUXWindow.class.getClass().getResource(Constants.ICON_PATH);
 		JButton newChat = new JButton(new ImageIcon(imgURL));
+		newChat.setBackground(new Color(200, 200, 200));
 		newChat.setPreferredSize(new Dimension(50, 50));
 		newChat.setToolTipText("Create a new Chat Group");
 		newChat.addActionListener(new ActionListener() {
