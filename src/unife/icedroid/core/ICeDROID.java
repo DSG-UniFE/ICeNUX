@@ -4,6 +4,7 @@ import unife.icedroid.services.ApplevDisseminationChannelService.OnMessageReceiv
 import unife.icedroid.core.managers.ChannelListManager;
 import unife.icedroid.core.managers.MessageQueueManager;
 import unife.icedroid.core.managers.NeighborhoodManager;
+import unife.icedroid.core.routingalgorithms.RoutingAlgorithm;
 import unife.icedroid.core.routingalgorithms.SprayAndWaitThread;
 import unife.icedroid.utils.Settings;
 
@@ -13,7 +14,7 @@ public class ICeDROID {
     private ChannelListManager channelListManager;
     private NeighborhoodManager neighborhoodManager;
     private MessageQueueManager messageQueueManager;
-    private Thread routingThread;
+    private RoutingAlgorithm routingAlgorithm;
 
     private ICeDROID(OnMessageReceiveListener listener) throws Exception {
         if (Settings.getSettings(listener) != null) {
@@ -54,12 +55,12 @@ public class ICeDROID {
             boolean added = false;
             while (!added) {
                 try {
-                    added = ((SprayAndWaitThread) routingThread).add(message);
+                    added = routingAlgorithm.addMessageForTransmission(message);
                 } catch (Exception ex) {}
 
                 if (!added) {
-                    routingThread = new SprayAndWaitThread();
-                    routingThread.start();
+                	routingAlgorithm = new SprayAndWaitThread();
+                	((Thread) routingAlgorithm).start();
                 }
             }
             break;
@@ -67,7 +68,7 @@ public class ICeDROID {
     }
 
     public void close() {
-    	if (routingThread != null) routingThread.interrupt();
+    	if (routingAlgorithm != null) ((Thread) routingAlgorithm).interrupt();
     	Settings.getSettings().close();
     }
 }
