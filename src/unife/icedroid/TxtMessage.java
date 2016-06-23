@@ -14,8 +14,8 @@ public class TxtMessage extends ICeDROIDMessage {
     }
 
     public TxtMessage(Subscription subscription, String txt) {
-        super(subscription.getChannelID());
-        group = subscription.getGroupName();
+        super(subscription.getADCID());
+        group = subscription.getApplicationName();
         contentData = txt;
     }
 

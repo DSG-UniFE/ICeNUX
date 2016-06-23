@@ -174,6 +174,7 @@ public class ICeNUXWindow {
 				}				
 			}
 		});
+		
 		JScrollPane listContainer = new JScrollPane(list);
 		listContainer.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		listContainer.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);		
@@ -187,11 +188,11 @@ public class ICeNUXWindow {
 			@Override
 			protected Void doInBackground() {
 				Path subDir = Paths.get(Constants.RESOURCES_PATH);
-				File conversationLogFile = subDir.toFile();
+				File resourcesPath = subDir.toFile();
 				
 				try {
-	                if (!conversationLogFile.exists()) {
-	                	if (!conversationLogFile.mkdirs()) {
+	                if (!resourcesPath.exists()) {
+	                	if (!resourcesPath.mkdirs()) {
 	                		throw new IOException("failed to create the path: " + subDir);
 	                	}
 	                }

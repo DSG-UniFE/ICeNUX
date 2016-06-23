@@ -13,11 +13,11 @@ public class Subscription implements Serializable {
         groupName = group;
     }
 
-    public String getChannelID() {
+    public String getADCID() {
         return channelID;
     }
 
-    public String getGroupName() {
+    public String getApplicationName() {
         return groupName;
     }
 

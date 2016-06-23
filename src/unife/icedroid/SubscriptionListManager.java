@@ -21,9 +21,17 @@ public class SubscriptionListManager {
 
 
     private SubscriptionListManager() {
-        subscriptionsList = new ArrayList<>(0);
+        subscriptionsList = new ArrayList<Subscription>(0);
         try {
-            BufferedReader br = new BufferedReader(new FileReader(Constants.SUBSCRIPTIONS_FILE_NAME));
+        	File subscriptionsFile = new File (Constants.SUBSCRIPTIONS_PATH);
+            if (!subscriptionsFile.exists()) {
+            	File subscriptionParentDir = subscriptionsFile.getParentFile();
+            	if (!subscriptionParentDir.exists() && !subscriptionParentDir.mkdirs()) {
+            		throw new IOException("Failed to create the path: " + subscriptionsFile.getParent());
+            	}
+            	subscriptionsFile.createNewFile();
+            }
+            BufferedReader br = new BufferedReader(new FileReader(Constants.SUBSCRIPTIONS_PATH));
 
             Subscription subscription;
             String subscriptionLine;
@@ -55,7 +63,6 @@ public class SubscriptionListManager {
 
     public synchronized Subscription subscribe(String channel, String group) {
         Subscription subscription = new Subscription(channel, group);
-        
         if (!subscriptionsList.contains(subscription)) {
             subscriptionsList.add(subscription);
 
@@ -63,24 +70,27 @@ public class SubscriptionListManager {
             try {
             	FileOutputStream fos = null;
 	            try {
-	            	fos = new FileOutputStream(Constants.SUBSCRIPTIONS_FILE_NAME, true);
+	            	fos = new FileOutputStream(Constants.SUBSCRIPTIONS_PATH, true);
 	            } catch (FileNotFoundException fnfex) {
-	            	File subscriptionsFile = new File (Constants.SUBSCRIPTIONS_FILE_NAME);
-	            	if (!subscriptionsFile.getParentFile().mkdirs()) {
-	            		throw new IOException("failed to create the path " + subscriptionsFile.getParent());
+	            	File subscriptionsParentDir = new File (Constants.SUBSCRIPTIONS_PATH).getParentFile();
+	            	if (!subscriptionsParentDir.exists()) {
+		            	if (!subscriptionsParentDir.mkdirs()) {
+		            		throw new IOException("Failed to create the path: " + subscriptionsParentDir);
+		            	}
 	            	}
-	            	fos = new FileOutputStream(Constants.SUBSCRIPTIONS_FILE_NAME, true);
+	            	fos = new FileOutputStream(Constants.SUBSCRIPTIONS_PATH, true);
 	            }
                 
-                fos.write((subscription.getSubscriptionFileName() + "\n").getBytes());
+                fos.write((subscription.toString() + "\n").getBytes());
                 fos.close();
 
                 //Create conversation file                
                 String conversationFilePath = Constants.CONVERSATIONS_PATH + subscription.getSubscriptionFileName();
                 File conversationLogFile = new File (conversationFilePath);
                 if (!conversationLogFile.exists()) {
-                	if (!conversationLogFile.getParentFile().mkdirs()) {
-                		throw new IOException("failed to create the path " + conversationFilePath);
+                	File conversationLogParentDir = conversationLogFile.getParentFile();
+                	if (!conversationLogParentDir.exists() && !conversationLogParentDir.mkdirs()) {
+                		throw new IOException("Failed to create the path: " + conversationFilePath);
                 	}
                 	conversationLogFile.createNewFile();
                 }
@@ -89,7 +99,8 @@ public class SubscriptionListManager {
                 }
 
                 if (DEBUG) {
-                	System.out.println(TAG + " Subscribing to: " + subscription.toString());
+                	System.out.println(TAG + " - Application " + subscription.getApplicationName() + 
+                			" successfully subscribed to ADC " + subscription.getADCID());
                 }
             } catch (Exception ex) {
                 String msg = ex.getMessage();
