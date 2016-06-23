@@ -32,5 +32,9 @@ public class Subscription implements Serializable {
     public String toString() {
         return channelID + ":" + groupName;
     }
+    
+    public String getSubscriptionFileName() {
+        return channelID + "." + groupName;
+    }
 
 }

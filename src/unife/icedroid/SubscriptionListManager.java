@@ -1,16 +1,19 @@
 package unife.icedroid;
 
 import unife.icedroid.core.ICeDROID;
+import unife.icedroid.resources.Constants;
+
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class SubscriptionListManager {
     private static final String TAG = "SubscriptionListManager";
     private static final boolean DEBUG = true;
 
-    private static final String subscriptionsFileName = "resources/subscriptions";
     private volatile static SubscriptionListManager instance = null;
 
     private ArrayList<Subscription> subscriptionsList;
@@ -19,8 +22,7 @@ public class SubscriptionListManager {
     private SubscriptionListManager() {
         subscriptionsList = new ArrayList<>(0);
         try {
-            BufferedReader br = new BufferedReader(new FileReader(
-            										subscriptionsFileName));
+            BufferedReader br = new BufferedReader(new FileReader(Constants.SUBSCRIPTIONS_FILE_NAME));
 
             Subscription subscription;
             String subscriptionLine;
@@ -62,16 +64,25 @@ public class SubscriptionListManager {
             ICeDROID.getInstance().subscribe(channel);
 
             try {
-                FileOutputStream fos = new FileOutputStream(subscriptionsFileName, true);
-                fos.write((subscription.toString() + "\n").getBytes());
+                FileOutputStream fos = new FileOutputStream(Constants.SUBSCRIPTIONS_FILE_NAME, true);
+                fos.write((subscription.getSubscriptionFileName() + "\n").getBytes());
                 fos.close();
 
-                //Create conversation file
-                String conversationFileName = "resources/conversations/" + subscription.toString(); 
-                fos = new FileOutputStream(conversationFileName);
+                //Create conversation file                
+                String conversationFilePath = Constants.CONVERSATIONS_PATH + subscription.getSubscriptionFileName();
+                File conversationLogFile = new File (conversationFilePath);
+                if (!conversationLogFile.exists()) {
+                	if (!conversationLogFile.mkdirs()) {
+                		throw new IOException("failed to create the path " + conversationFilePath);
+                	}
+                	conversationLogFile.createNewFile();
+                }
+                fos = new FileOutputStream(conversationLogFile);
                 fos.close();
 
-                if (DEBUG) System.out.println(TAG + " Subscribing to: " + subscription.toString());
+                if (DEBUG) {
+                	System.out.println(TAG + " Subscribing to: " + subscription.toString());
+                }
             } catch (Exception ex) {
                 String msg = ex.getMessage();
                 if (DEBUG) {
