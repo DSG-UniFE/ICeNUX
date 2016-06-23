@@ -6,7 +6,7 @@ import java.util.HashMap;
 public class ICeDROIDMessage extends BaseMessage {
 	private static final long serialVersionUID = 1;
     public static final String ICEDROID_MESSAGE = "ICeDROIDMessage";
-    public final static String EXTRA_ICEDROID_MESSAGE = "unife.icedroid.ICEDROID_MESSAGE";
+    public static final String EXTRA_ICEDROID_MESSAGE = "unife.icedroid.ICEDROID_MESSAGE";
 
     private String channel;
     private HashMap<String, Integer> properties;
@@ -48,7 +48,7 @@ public class ICeDROIDMessage extends BaseMessage {
         ICeDROIDMessage iCeDROIDMessage = null;
         try {
             iCeDROIDMessage = (ICeDROIDMessage) super.clone();
-            iCeDROIDMessage.properties = (HashMap) properties.clone();
+            iCeDROIDMessage.properties = (HashMap<String, Integer>) properties.clone();
         } catch (Exception ex) {}
         return iCeDROIDMessage;
     }
