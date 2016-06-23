@@ -50,21 +50,19 @@ public class ICeDROID {
 
     public void send(ICeDROIDMessage message) {
         switch (Settings.getSettings().getRoutingAlgorithm()) {
-            case SPRAY_AND_WAIT:
-                boolean added = false;
-                while (!added) {
-                    try {
-                        added = ((SprayAndWaitThread) routingThread).add(message);
-                    } catch (Exception ex) {}
+        case SPRAY_AND_WAIT:
+            boolean added = false;
+            while (!added) {
+                try {
+                    added = ((SprayAndWaitThread) routingThread).add(message);
+                } catch (Exception ex) {}
 
-                    if (!added) {
-                        routingThread = new SprayAndWaitThread();
-                        routingThread.start();
-                    }
+                if (!added) {
+                    routingThread = new SprayAndWaitThread();
+                    routingThread.start();
                 }
-                break;
-            default:
-                break;
+            }
+            break;
         }
     }
 
