@@ -2,6 +2,8 @@ package unife.icedroid;
 
 import unife.icedroid.UIElements.GhostText;
 import unife.icedroid.core.Intent;
+import unife.icedroid.resources.Constants;
+
 import java.awt.EventQueue;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -25,6 +27,7 @@ import javax.swing.BoxLayout;
 import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.WatchService;
@@ -67,8 +70,10 @@ public class ICeNUXWindow {
 		JPanel toolbar = new JPanel(new BorderLayout());
 		JLabel title = new JLabel("ICeNUX");
 		JPanel newChatContainer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		JButton newChat = new JButton(new ImageIcon("resources/ic_chat.png"));
+		java.net.URL imgURL = ICeNUXWindow.class.getClass().getResource(Constants.ICON_PATH);
+		JButton newChat = new JButton(new ImageIcon(imgURL));
 		newChat.setPreferredSize(new Dimension(50, 50));
+		newChat.setToolTipText("Create a new Chat Group");
 		newChat.addActionListener(new ActionListener() {
 			
 			@Override
@@ -84,8 +89,10 @@ public class ICeNUXWindow {
 				
 				final JTextField channel = new JTextField(25);
 				new GhostText(channel, "ADC Name");
+				channel.setToolTipText("Insert here the ADC name");
 				final JTextField group = new JTextField(25);
 				new GhostText(group, "Group (Application) Name");
+				group.setToolTipText("Insert here the group (application) name");
 				JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 				panel.add(channel);
 				panel.add(group);
@@ -175,7 +182,7 @@ public class ICeNUXWindow {
 			
 			@Override
 			protected Void doInBackground() {
-				Path subDir = Paths.get("resources/");
+				Path subDir = Paths.get(Constants.RESOURCES_PATH);
 				
 				try {
 					WatchService watcher = subDir.getFileSystem().newWatchService();
@@ -196,7 +203,7 @@ public class ICeNUXWindow {
 					}
 					
 				} catch (Exception ex) {
-					System.out.println(ex); 
+					System.err.println(ex.getMessage());
 				}
 				
 				return null;
