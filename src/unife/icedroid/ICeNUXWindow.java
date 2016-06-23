@@ -10,8 +10,6 @@ import java.awt.Dialog;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.ActionEvent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -151,6 +149,7 @@ public class ICeNUXWindow {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				if (!e.getValueIsAdjusting()) {
+					@SuppressWarnings("unchecked")
 					JList<String> list = (JList<String>) e.getSource();
 					String sub = list.getSelectedValue();
 					if (sub != null) {
