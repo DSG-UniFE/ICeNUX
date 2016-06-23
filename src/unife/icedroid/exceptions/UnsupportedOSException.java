@@ -3,6 +3,7 @@ package unife.icedroid.exceptions;
 public class UnsupportedOSException extends Exception {
 
 	public UnsupportedOSException() {
+		super();
 	}
 
 	public UnsupportedOSException(String message) {
