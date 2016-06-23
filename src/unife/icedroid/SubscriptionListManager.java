@@ -5,6 +5,7 @@ import unife.icedroid.resources.Constants;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -54,13 +55,23 @@ public class SubscriptionListManager {
 
     public synchronized Subscription subscribe(String channel, String group) {
         Subscription subscription = new Subscription(channel, group);
+        
         if (!subscriptionsList.contains(subscription)) {
             subscriptionsList.add(subscription);
 
             ICeDROID.getInstance().subscribe(channel);
-
             try {
-                FileOutputStream fos = new FileOutputStream(Constants.SUBSCRIPTIONS_FILE_NAME, true);
+            	FileOutputStream fos = null;
+	            try {
+	            	fos = new FileOutputStream(Constants.SUBSCRIPTIONS_FILE_NAME, true);
+	            } catch (FileNotFoundException fnfex) {
+	            	File subscriptionsFile = new File (Constants.SUBSCRIPTIONS_FILE_NAME);
+	            	if (!subscriptionsFile.getParentFile().mkdirs()) {
+	            		throw new IOException("failed to create the path " + subscriptionsFile.getParent());
+	            	}
+	            	fos = new FileOutputStream(Constants.SUBSCRIPTIONS_FILE_NAME, true);
+	            }
+                
                 fos.write((subscription.getSubscriptionFileName() + "\n").getBytes());
                 fos.close();
 
@@ -73,8 +84,9 @@ public class SubscriptionListManager {
                 	}
                 	conversationLogFile.createNewFile();
                 }
-                fos = new FileOutputStream(conversationLogFile);
-                fos.close();
+                if (!conversationLogFile.exists()) {
+                	throw new IOException("Impossible to create the file: " + conversationFilePath);
+                }
 
                 if (DEBUG) {
                 	System.out.println(TAG + " Subscribing to: " + subscription.toString());
@@ -99,8 +111,7 @@ public class SubscriptionListManager {
         return subscriptionsList.contains(subscription);
     }
 
-    public synchronized ArrayList<Subscription> getNewSubscriptions(
-                                                        ArrayList<Subscription> oldSubscriptions) {
+    public synchronized ArrayList<Subscription> getNewSubscriptions(ArrayList<Subscription> oldSubscriptions) {
         ArrayList<Subscription> newSubscriptions = new ArrayList<>(0);
         for (Subscription s : getSubscriptionsList()) {
             if (!oldSubscriptions.contains(s)) {

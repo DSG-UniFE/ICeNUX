@@ -12,6 +12,8 @@ import java.awt.Dimension;
 import java.awt.Dialog;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JFrame;
@@ -185,20 +187,24 @@ public class ICeNUXWindow {
 			@Override
 			protected Void doInBackground() {
 				Path subDir = Paths.get(Constants.RESOURCES_PATH);
+				File conversationLogFile = subDir.toFile();
 				
 				try {
+	                if (!conversationLogFile.exists()) {
+	                	if (!conversationLogFile.mkdirs()) {
+	                		throw new IOException("failed to create the path: " + subDir);
+	                	}
+	                }
+	                
 					WatchService watcher = subDir.getFileSystem().newWatchService();
 					subDir.register(watcher, StandardWatchEventKinds.ENTRY_MODIFY);
-					
 					while (true) {
 						WatchKey wk = watcher.take();
 						for (WatchEvent<?> event : wk.pollEvents()) {
 							Path file = (Path) event.context();
-							if (file.endsWith("subscriptions")) {
-								publish(SubscriptionListManager.
-										getSubscriptionListManager().
-										getLastSubscription().
-										toString());
+							if (file.endsWith(Constants.SUBSCRIPTIONS_FILE_NAME)) {
+								publish(SubscriptionListManager.getSubscriptionListManager().
+										getLastSubscription().toString());
 							}
 						}
 						wk.reset();
