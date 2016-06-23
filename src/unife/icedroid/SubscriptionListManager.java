@@ -72,7 +72,7 @@ public class SubscriptionListManager {
                 String conversationFilePath = Constants.CONVERSATIONS_PATH + subscription.getSubscriptionFileName();
                 File conversationLogFile = new File (conversationFilePath);
                 if (!conversationLogFile.exists()) {
-                	if (!conversationLogFile.mkdirs()) {
+                	if (!conversationLogFile.getParentFile().mkdirs()) {
                 		throw new IOException("failed to create the path " + conversationFilePath);
                 	}
                 	conversationLogFile.createNewFile();
