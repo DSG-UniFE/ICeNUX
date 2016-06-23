@@ -43,12 +43,8 @@ public class BroadcastReceiveThread extends Thread {
             } catch (Exception ex) {
                 String msg = ex.getMessage();
                 if (DEBUG) {
-                	if (msg != null) {
-                		msg = TAG + ": " + msg;
-                	} else {
-                		msg = TAG + ": " + "Error in BroadcastReceiveThread";
-                	}
-                	System.out.println(msg);
+                	msg = TAG + ": " + ((msg != null) ? msg : "Error in BroadcastReceiveThread");
+                	System.err.println(msg);
                 }
             }
         }
