@@ -47,11 +47,10 @@ public class ApplevDisseminationChannelService extends Thread {
                 intents.remove(0);
             }
 
-            ICeDROIDMessage iceMessage =
-                                (ICeDROIDMessage) intent.getExtra(EXTRA_ADC_MESSAGE);
+            ICeDROIDMessage iceMessage = (ICeDROIDMessage) intent.getExtra(EXTRA_ADC_MESSAGE);
 
-            //There's a new regular message, first it must be decided whether to cache or not
-            //and following whether to forward it or not
+            /* There's a new regular message; first it needs to be decided whether 
+             * to cache it or not, and then whether to forward it or not */
             if (iceMessage != null) {
                 //This host's messages
                 if (iceMessage.getHostID().equals(Settings.getSettings().getHostID())) {
@@ -75,11 +74,14 @@ public class ApplevDisseminationChannelService extends Thread {
                         !messageQueueManager.isExpired(iceMessage)) {
 
                         if (channelListManager.isSubscribedToChannel(iceMessage)) {
+                        	// Within-channel transmission --> deliver to the application
                             onMessageReceiveListener.receive(iceMessage);
                         } else {
                             switch (Settings.getSettings().getRoutingAlgorithm()) {
                                 case SPRAY_AND_WAIT:
                                     Integer L = iceMessage.getProperty("L");
+                                    /* Message discarded if Spray and Wait is not in the spraying
+                                     * phase and the membrane-passing procedure fails */
                                     if (L == null || L <= 0) {
                                         Random random = new Random(System.currentTimeMillis());
                                         if (random.nextDouble() > CACHING_PROBABILITY) {
@@ -99,18 +101,19 @@ public class ApplevDisseminationChannelService extends Thread {
                         }
                     }
                 }
-
             } else if (intent.hasExtra(ChannelListManager.EXTRA_NEW_CHANNEL)) {
+            	/* If the host has become member of a new ADC, look among all cached
+            	 * messages for those eligible for delivery to the application */
                 for (ICeDROIDMessage msg : messageQueueManager.getCachedMessages()) {
                     if (channelListManager.isSubscribedToChannel(msg)) {
                         onMessageReceiveListener.receive(msg);
                     }
                 }
             }
-            //There's a new neighbor or a neighbor update
+            // Received a HELLO message from a (new?) neighbor
             else {
-                HelloMessage helloMessage = (HelloMessage) intent.getExtra(HelloMessage.
-                        EXTRA_HELLO_MESSAGE);
+                HelloMessage helloMessage = (HelloMessage)
+                		intent.getExtra(HelloMessage.EXTRA_HELLO_MESSAGE);
 
                 if (intent.hasExtra(NeighborInfo.EXTRA_NEW_NEIGHBOR)) {
                     messageQueueManager.removeICeDROIDMessagesFromForwardingMessages();
@@ -128,7 +131,7 @@ public class ApplevDisseminationChannelService extends Thread {
                                             getExtra(NeighborInfo.EXTRA_NEW_CHANNELS);
                     NeighborInfo n = neighborhoodManager.getNeighborByID(helloMessage.getHostID());
                     for (ICeDROIDMessage msg : messageQueueManager.getCachedMessages()) {
-                        if (newChannels.contains(msg.getChannel())) {
+                        if (newChannels.contains(msg.getADCID())) {
                             if (!n.hasInCache(msg)) {
                                 messageQueueManager.addToForwardingMessages(msg);
                             }

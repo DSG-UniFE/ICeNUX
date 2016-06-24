@@ -27,7 +27,7 @@ public class ICeDROIDMessage extends BaseMessage {
         properties = msg.properties;
     }
 
-    public String getChannel() {
+    public String getADCID() {
         return channel;
     }
 

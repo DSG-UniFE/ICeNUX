@@ -94,7 +94,7 @@ public class NeighborhoodManager {
 
     public synchronized boolean isThereNeighborNotInterestedToMessageAndNotCached(
                                                                             ICeDROIDMessage msg) {
-        String channel = msg.getChannel();
+        String channel = msg.getADCID();
         for (NeighborInfo neighbor : neighborsList) {
             if (!neighbor.getHostChannels().contains(channel) &&
                 !neighbor.getCachedMessages().contains(msg)) {
@@ -105,7 +105,7 @@ public class NeighborhoodManager {
     }
 
     public synchronized boolean isThereNeighborSubscribedToChannel(ICeDROIDMessage msg) {
-        String channel = msg.getChannel();
+        String channel = msg.getADCID();
         for (NeighborInfo neighbor : neighborsList) {
             if (neighbor.getHostChannels().contains(channel) &&
                     !neighbor.getCachedMessages().contains(msg)) {
@@ -116,7 +116,7 @@ public class NeighborhoodManager {
     }
 
     public synchronized boolean isThereNeighborWithoutThisMessage(ICeDROIDMessage msg) {
-        String channel = msg.getChannel();
+        String channel = msg.getADCID();
         //Is there a neighbor that isn't interested to this message (doesn't belong
         //to the same message channel) and hasn't the message in its own cache?
         for (NeighborInfo neighbor : neighborsList) {
@@ -131,7 +131,7 @@ public class NeighborhoodManager {
     public synchronized ArrayList<NeighborInfo> whoHasThisMessageButNotInterested(
                                                                             ICeDROIDMessage msg) {
         ArrayList<NeighborInfo> neighbors = new ArrayList<>(0);
-        String channel = msg.getChannel();
+        String channel = msg.getADCID();
         for (NeighborInfo neighbor : neighborsList) {
             if (!neighbor.getHostChannels().contains(channel)) {
                 if (neighbor.getCachedMessages().contains(msg)) {

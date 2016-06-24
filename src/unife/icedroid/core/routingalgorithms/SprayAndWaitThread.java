@@ -21,6 +21,9 @@ public class SprayAndWaitThread extends Thread implements RoutingAlgorithm {
     private Lock lock;
     private Condition condition;
     private boolean stopped;
+    
+    NeighborhoodManager neighborhoodManager;
+    MessageQueueManager messageQueueManager;
 
     public SprayAndWaitThread() {
         lock = new ReentrantLock();
@@ -28,6 +31,8 @@ public class SprayAndWaitThread extends Thread implements RoutingAlgorithm {
         messages = new ArrayList<>(0);
         ackLists = new ArrayList<>(0);
         stopped = false;
+        neighborhoodManager = NeighborhoodManager.getNeighborhoodManager();
+        messageQueueManager = MessageQueueManager.getMessageQueueManager();
     }
 
     @Override
@@ -37,14 +42,11 @@ public class SprayAndWaitThread extends Thread implements RoutingAlgorithm {
         while (messages.size() == 0) {
             try {
                 condition.await();
-            } catch (Exception ex) {
-            }
+            } catch (Exception ex) {}
         }
         lock.unlock();
 
         ICeDROIDMessage msg;
-        NeighborhoodManager neighborhoodManager = NeighborhoodManager.getNeighborhoodManager();
-        MessageQueueManager messageQueueManager = MessageQueueManager.getMessageQueueManager();
         int L = 1;
         int msgL;
         Intent intent = new Intent();

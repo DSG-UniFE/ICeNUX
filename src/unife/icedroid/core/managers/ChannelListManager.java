@@ -105,7 +105,7 @@ public class ChannelListManager {
 
     public synchronized boolean isSubscribedToChannel(ICeDROIDMessage msg) {
         for (String c : channelList) {
-            if (c.equals(msg.getChannel())) {
+            if (c.equals(msg.getADCID())) {
                 return true;
             }
         }

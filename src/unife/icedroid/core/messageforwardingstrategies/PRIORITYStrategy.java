@@ -19,7 +19,7 @@ public class PRIORITYStrategy extends MessageForwardingStrategy {
             }
         } else {
             ICeDROIDMessage regularMessage = (ICeDROIDMessage) msg;
-            if (regularMessage.getChannel().equals("Sport")) {
+            if (regularMessage.getADCID().equals("Sport")) {
                 if (indexForwardingMessages >= list.size()) {
                     indexForwardingMessages = 0;
                 }
@@ -28,7 +28,7 @@ public class PRIORITYStrategy extends MessageForwardingStrategy {
                     BaseMessage m = list.get(i);
                     if (m.getTypeOfMessage().equals(ICeDROIDMessage.ICEDROID_MESSAGE)) {
                         ICeDROIDMessage rm = (ICeDROIDMessage) m;
-                        if (!rm.getChannel().equals("Sport")) {
+                        if (!rm.getADCID().equals("Sport")) {
                             break;
                         }
                     }

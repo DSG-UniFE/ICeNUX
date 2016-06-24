@@ -118,7 +118,8 @@ public class SubscriptionListManager {
     }
 
     public synchronized boolean isSubscribedToMessage(TxtMessage msg) {
-        return subscriptionsList.contains(new Subscription(msg.getChannel(), msg.getGroup()));
+    	// This should only check the appID
+        return subscriptionsList.contains(new Subscription(msg.getADCID(), msg.getAppID()));
     }
 
     public synchronized ArrayList<Subscription> getNewSubscriptions(ArrayList<Subscription> oldSubscriptions) {

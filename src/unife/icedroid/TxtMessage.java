@@ -19,7 +19,7 @@ public class TxtMessage extends ICeDROIDMessage {
         contentData = txt;
     }
 
-    public String getGroup() {
+    public String getAppID() {
         return group;
     }
 

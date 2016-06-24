@@ -27,12 +27,13 @@ public class ChatsManager implements OnMessageReceiveListener {
         return instance;
     }
 
+    // Method called when a new TextMessage is received
     public synchronized void saveMessageInConversation(TxtMessage message) throws IOException {
         String data = "[" + message.getReceptionTime().toString() + "] " +
                         message.getHostID() + ": " +
                         message.getContentData() + "\n";
 
-        Subscription subscription = new Subscription(message.getChannel(), message.getGroup());
+        Subscription subscription = new Subscription(message.getADCID(), message.getAppID());
         String path = Constants.CONVERSATIONS_PATH + subscription.getSubscriptionFileName();
         File conversationLogFile = new File (path);
         if (!conversationLogFile.exists()) {
@@ -56,6 +57,7 @@ public class ChatsManager implements OnMessageReceiveListener {
         }
     }
 
+    // Method to implement the OnMessageReceiveListener interface
     public void receive (ICeDROIDMessage message) {
         try {
             TxtMessage txt = (TxtMessage) message;
