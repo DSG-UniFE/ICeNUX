@@ -36,6 +36,7 @@ public class Settings {
     private String networkBroadcastAddress;
     private int receivePort;
     private int messageSize;
+    private int helloMessagePeriod;
     private RoutingAlgorithm routingAlgorithm;
     private int cacheSize;
     private CachingStrategy cachingStrategy;
@@ -98,6 +99,9 @@ public class Settings {
                         break;
                     case "MsgSize":
                         messageSize = Integer.parseInt(setting[2]);
+                        break;
+                    case "HelloMessagePeriod":
+                        helloMessagePeriod = Integer.parseInt(setting[2]);
                         break;
                     case "RoutingAlgorithm":
                         if (setting[2].equals("SprayAndWait")) {
@@ -333,6 +337,10 @@ public class Settings {
     public int getCacheSize() {
         return cacheSize;
     }
+
+	public int getHelloMessagePeriod() {
+		return helloMessagePeriod;
+	}
 
     public CachingStrategy getCachingStrategy() {
         return cachingStrategy;

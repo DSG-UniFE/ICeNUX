@@ -9,17 +9,18 @@ import java.util.*;
 public class HelloMessageService extends Thread {
     private static final String TAG = "HelloMessageService";
     private static final boolean DEBUG = true;
-    private static final int DURATION = 15*1000;
 
     private MessageQueueManager messageQueueManager;
     private Timer helloMessageTimer;
     private ArrayList<Intent> intents;
     private ApplevDisseminationChannelService ADCThread;
+    private final int helloMessagePeriod;
 
     public HelloMessageService() {
     	intents = new ArrayList<>();
         messageQueueManager = MessageQueueManager.getMessageQueueManager();
         ADCThread = Settings.getSettings().getADCThread();
+        helloMessagePeriod = Settings.getSettings().getHelloMessagePeriod();
 
         helloMessageTimer = new Timer(TAG);
         helloMessageTimer.schedule(new TimerTask() {
@@ -30,7 +31,7 @@ public class HelloMessageService extends Thread {
                 messageQueueManager.addToForwardingMessages(helloMessage);
             }
 
-        }, new Date(System.currentTimeMillis()), DURATION);
+        }, new Date(System.currentTimeMillis()), helloMessagePeriod);
 
     }
 
