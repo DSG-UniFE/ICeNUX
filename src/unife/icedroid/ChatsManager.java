@@ -36,8 +36,9 @@ public class ChatsManager implements OnMessageReceiveListener {
         String path = Constants.CONVERSATIONS_PATH + subscription.getSubscriptionFileName();
         File conversationLogFile = new File (path);
         if (!conversationLogFile.exists()) {
-        	if (!conversationLogFile.getParentFile().mkdirs()) {
-        		throw new IOException("failed to create the path " + path);
+        	File conversationLogParentDir = conversationLogFile.getParentFile();
+        	if (!conversationLogParentDir.exists() && !conversationLogParentDir.mkdirs()) {
+        		throw new IOException("Failed to create the path: " + conversationLogParentDir);
         	}
         	conversationLogFile.createNewFile();
         }
