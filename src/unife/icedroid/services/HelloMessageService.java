@@ -58,10 +58,10 @@ public class HelloMessageService extends Thread {
             intent.putExtra(HelloMessage.EXTRA_HELLO_MESSAGE, helloMessage);
 
             if (newChannels == null) {
-                //If there is a new neighbor then there's need to recalculate forwarding messages
+                // If there is a new neighbor then there's need to recalculate messages to forward
                 intent.putExtra(NeighborInfo.EXTRA_NEW_NEIGHBOR, true);
             } else {
-                //If all neighbors have a message, then it's needed to stop forwarding it
+                // If all neighbors have a message, then it's needed to stop forwarding it
                 intent.putExtra(NeighborInfo.EXTRA_NEIGHBOR_UPDATE, true);
                 intent.putExtra(NeighborInfo.EXTRA_NEW_CHANNELS, newChannels);
             }
@@ -72,13 +72,8 @@ public class HelloMessageService extends Thread {
     
     
     private NeighborInfo createNeighborInfo(HelloMessage helloMessage) {
-        String hostID = helloMessage.getHostID();
-        String hostUsername = helloMessage.getHostUsername();
-        ArrayList<String> hostSubscription = helloMessage.getHostChannels();
-        ArrayList<ICeDROIDMessage> cachedMessages = helloMessage.getCachedMessages();
-
-        return new NeighborInfo(hostID, hostUsername, null,
-                hostSubscription, cachedMessages);
+        return new NeighborInfo(helloMessage.getHostID(), helloMessage.getHostUsername(), null,
+        		helloMessage.getHostSubscribedADCs(), helloMessage.getCachedMessages());
     }
     
     public void add(Intent intent) {

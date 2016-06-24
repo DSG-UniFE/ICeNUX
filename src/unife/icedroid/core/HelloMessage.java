@@ -9,7 +9,7 @@ public class HelloMessage extends BaseMessage {
     public static final String HELLO_MESSAGE = "helloMessage";
     public static final String EXTRA_HELLO_MESSAGE = "unife.icedroid.HELLO_MESSAGE";
 
-    private ArrayList<String> hostChannels;
+    private ArrayList<String> hostSubscribedADCs;
     private ArrayList<ICeDROIDMessage> cachedMessages;
 
     public HelloMessage() {
@@ -17,12 +17,10 @@ public class HelloMessage extends BaseMessage {
         typeOfMessage = HELLO_MESSAGE;
         ttl = INFINITE_TTL;
         priority = MAX_PRIORITY_LEVEL;
-        hostChannels = ChannelListManager.getChannelListManager().getChannelList();
+        hostSubscribedADCs = ChannelListManager.getChannelListManager().getChannelList();
 
-        ArrayList<ICeDROIDMessage> cm = MessageQueueManager.getMessageQueueManager().
-                                                                            getCachedMessages();
-        ArrayList<ICeDROIDMessage> dm = MessageQueueManager.getMessageQueueManager().
-                                                                        getDiscardedMessages();
+        ArrayList<ICeDROIDMessage> cm = MessageQueueManager.getMessageQueueManager().getCachedMessages();
+        ArrayList<ICeDROIDMessage> dm = MessageQueueManager.getMessageQueueManager().getDiscardedMessages();
 
         //Remove payload, save only the header field of cached messages
         ArrayList<ICeDROIDMessage> cmHeaders = new ArrayList<>(0);
@@ -36,8 +34,8 @@ public class HelloMessage extends BaseMessage {
     }
 
 
-    public ArrayList<String> getHostChannels() {
-        return hostChannels;
+    public ArrayList<String> getHostSubscribedADCs() {
+        return hostSubscribedADCs;
     }
 
     public ArrayList<ICeDROIDMessage> getCachedMessages() {
@@ -45,7 +43,7 @@ public class HelloMessage extends BaseMessage {
     }
 
     public void setHostChannels(ArrayList<String> channels) {
-        hostChannels = new ArrayList<>(channels);
+        hostSubscribedADCs = new ArrayList<>(channels);
     }
 
     public void setCachedMessages(ArrayList<ICeDROIDMessage> messages) {
