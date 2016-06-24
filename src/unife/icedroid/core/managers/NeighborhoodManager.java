@@ -41,11 +41,13 @@ public class NeighborhoodManager {
             Date lastTimeSeen = new Date(System.currentTimeMillis());
             neighbor.setLastTimeSeen(lastTimeSeen);
 
+            // Check if we already know about this neighbor
             NeighborInfo ni = isNeighborPresent(neighbor);
 
             NeighborRemoveTask task;
             ArrayList<String> newChannels = null;
             if (ni != null) {
+            	// Check if the neighbor has subscribed to new ADCs
                 newChannels = new ArrayList<>(0);
                 for (String c : neighbor.getNeighborSubscribedADCs()) {
                     if (!ni.getNeighborSubscribedADCs().contains(c)) {
@@ -72,7 +74,7 @@ public class NeighborhoodManager {
 
     public synchronized void remove(NeighborInfo neighbor) {
         if (System.currentTimeMillis() > neighbor.getLastTimeSeen().getTime() + ttlOfNeighbor) {
-            if (DEBUG) System.out.println(TAG + " Deleting neighbor...");
+            if (DEBUG) System.out.println(TAG + " - Removing neighbor " + neighbor.getHostID());
             neighborsList.remove(neighbor);
         }
     }

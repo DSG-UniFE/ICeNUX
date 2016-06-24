@@ -51,11 +51,12 @@ public class HelloMessageService extends Thread {
     		HelloMessage helloMessage = (HelloMessage) intent.getExtra(HelloMessage.EXTRA_HELLO_MESSAGE);
 
             NeighborInfo neighbor = createNeighborInfo(helloMessage);
+            
+            // If add() returns null, the neighbor is new
             ArrayList<String> newChannels = NeighborhoodManager.getNeighborhoodManager().add(neighbor);
 
             intent = new Intent();
             intent.putExtra(HelloMessage.EXTRA_HELLO_MESSAGE, helloMessage);
-
             if (newChannels == null) {
                 // If there is a new neighbor then there's the need to recalculate messages to forward
                 intent.putExtra(NeighborInfo.EXTRA_NEW_NEIGHBOR, true);
