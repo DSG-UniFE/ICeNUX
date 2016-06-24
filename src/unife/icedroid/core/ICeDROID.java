@@ -46,8 +46,8 @@ public class ICeDROID {
     	return instance;
     }
 
-    public void subscribe(String channel) {
-        channelListManager.subscribe(channel);
+    public void subscribe(String adcID) {
+        channelListManager.subscribe(adcID);
     }
 
     public void send(ICeDROIDMessage message) {

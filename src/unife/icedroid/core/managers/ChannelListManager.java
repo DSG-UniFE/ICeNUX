@@ -100,7 +100,7 @@ public class ChannelListManager {
     }
 
     public synchronized ArrayList<String> getChannelList() {
-        return new ArrayList<>(channelList);
+        return new ArrayList<String>(channelList);
     }
 
     public synchronized boolean isSubscribedToChannel(ICeDROIDMessage msg) {

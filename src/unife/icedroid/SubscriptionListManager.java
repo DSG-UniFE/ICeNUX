@@ -61,12 +61,12 @@ public class SubscriptionListManager {
         return instance;
     }
 
-    public synchronized Subscription subscribe(String channel, String application) {
-        Subscription subscription = new Subscription(channel, application);
+    public synchronized Subscription subscribe(String adcID, String application) {
+        Subscription subscription = new Subscription(adcID, application);
         if (!subscriptionsList.contains(subscription)) {
             subscriptionsList.add(subscription);
 
-            ICeDROID.getInstance().subscribe(channel);
+            ICeDROID.getInstance().subscribe(adcID);
             try {
             	FileOutputStream fos = null;
 	            try {
