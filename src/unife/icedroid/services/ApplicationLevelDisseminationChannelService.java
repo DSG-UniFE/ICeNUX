@@ -15,22 +15,28 @@ public class ApplicationLevelDisseminationChannelService extends Thread {
     private static final boolean DEBUG = true;
 
     public static final String EXTRA_ADC_MESSAGE = "unife.icedroid.ADC_MESSAGE";
-    public static final double CACHING_PROBABILITY = 0.1;
-    public static final double FORWARD_PROBABILITY = 0.3;
 
     private MessageQueueManager messageQueueManager;
     private ChannelListManager channelListManager;
     private NeighborhoodManager neighborhoodManager;
-    private ArrayList<Intent> intents;
     private OnMessageReceiveListener onMessageReceiveListener;
+    private final Settings settings;
+    private ArrayList<Intent> intents;
+    
+    public final double cachingProbability;
+    public final double forwardingProbability;
 
 
     public ApplicationLevelDisseminationChannelService(OnMessageReceiveListener listener) {
         messageQueueManager = MessageQueueManager.getMessageQueueManager();
         channelListManager = ChannelListManager.getChannelListManager();
         neighborhoodManager = NeighborhoodManager.getNeighborhoodManager();
-        intents = new ArrayList<>(0);
         onMessageReceiveListener = listener;
+        settings = Settings.getSettings();
+        intents = new ArrayList<>(0);
+        
+        cachingProbability = settings.getADCCachingProbability();
+        forwardingProbability = settings.getADCForwardingProbability();
     }
 
     @Override
@@ -54,7 +60,7 @@ public class ApplicationLevelDisseminationChannelService extends Thread {
             if (iceMessage != null) {
                 //This host's messages
                 if (iceMessage.getHostID().equals(Settings.getSettings().getHostID())) {
-                    switch (Settings.getSettings().getRoutingAlgorithm()) {
+                    switch (settings.getRoutingAlgorithm()) {
                         case SPRAY_AND_WAIT:
                             messageQueueManager.removeMessageFromForwardingQueue(iceMessage);
                             messageQueueManager.removeMessageFromCachedMessages(iceMessage);
@@ -77,14 +83,14 @@ public class ApplicationLevelDisseminationChannelService extends Thread {
                         	// Within-channel transmission --> deliver to the application
                             onMessageReceiveListener.receive(iceMessage);
                         } else {
-                            switch (Settings.getSettings().getRoutingAlgorithm()) {
+                            switch (settings.getRoutingAlgorithm()) {
                                 case SPRAY_AND_WAIT:
                                     Integer L = iceMessage.getProperty("L");
                                     /* Message discarded if Spray and Wait is not in the spraying
                                      * phase and the membrane-passing procedure fails */
                                     if (L == null || L <= 0) {
                                         Random random = new Random(System.currentTimeMillis());
-                                        if (random.nextDouble() > CACHING_PROBABILITY) {
+                                        if (random.nextDouble() > cachingProbability) {
                                             toCache = false;
                                             messageQueueManager.addToDiscarded(iceMessage);
                                         }
@@ -125,9 +131,10 @@ public class ApplicationLevelDisseminationChannelService extends Thread {
                     
                 } else {
                     //If everyone has a message then stop forwarding it
-                    if (DEBUG)
-                        System.out.println(TAG + " Handling an HelloMessage UPDATE " + helloMessage.getMsgID());
-
+                    if (DEBUG) {
+                        System.out.println(TAG + " - Handling the HELLO Message UPDATE " +
+                        		helloMessage.getMsgID());
+                    }
                     ArrayList<String> newChannels = (ArrayList<String>) intent.
                                             getExtra(NeighborInfo.EXTRA_NEW_CHANNELS);
                     NeighborInfo n = neighborhoodManager.getNeighborByID(helloMessage.getHostID());
@@ -175,7 +182,7 @@ public class ApplicationLevelDisseminationChannelService extends Thread {
                         send = true;
                     } else if (neighborhoodManager.isThereNeighborWithoutThisMessage(msg)) {
                         Random random = new Random(System.currentTimeMillis());
-                        if (random.nextDouble() <= FORWARD_PROBABILITY) {
+                        if (random.nextDouble() <= forwardingProbability) {
                             send = true;
                         }
                     }

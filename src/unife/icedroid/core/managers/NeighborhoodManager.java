@@ -1,6 +1,7 @@
 package unife.icedroid.core.managers;
 
 import unife.icedroid.core.NeighborInfo;
+import unife.icedroid.utils.Settings;
 import unife.icedroid.core.BaseMessage;
 import unife.icedroid.core.ICeDROIDMessage;
 import java.util.ArrayList;
@@ -11,18 +12,29 @@ import java.util.TimerTask;
 public class NeighborhoodManager {
     private static final String TAG = "NeighborhoodManager";
     private static final boolean DEBUG = true;
+    
+    /* Additional amount of time, in ms, to wait before marking a
+     * neighbor as "away" when N HELLO messages from the same
+     * node have been missed. */
+    private static final long NEIGHBOR_AWAY_GAP = 300;
 
     private volatile static NeighborhoodManager instance;
-    private static final long ttlOfNeighbor = 60*1000;
 
     private ArrayList<NeighborInfo> neighborsList;
     private Timer neighborhoodManagerTimer;
+    private final long msBeforeAway;
     private long lastUpdate;
+    
+    private final Settings settings;
 
 
     private NeighborhoodManager() {
         neighborsList = new ArrayList<>(0);
         neighborhoodManagerTimer = new Timer();
+        
+        settings = Settings.getSettings();
+        msBeforeAway = (settings.getHelloMessagePeriod() * 
+        		settings.getMissedHelloMessagesBeforeAway()) + NEIGHBOR_AWAY_GAP;
     }
 
     public static NeighborhoodManager getNeighborhoodManager() {
@@ -61,7 +73,7 @@ public class NeighborhoodManager {
                 task = new NeighborRemoveTask(this, neighbor);
             }
 
-            Date expirationTime = new Date(lastTimeSeen.getTime() + ttlOfNeighbor);
+            Date expirationTime = new Date(lastTimeSeen.getTime() + msBeforeAway);
             neighborhoodManagerTimer.schedule(task, expirationTime);
 
             lastUpdate = lastTimeSeen.getTime();
@@ -73,8 +85,10 @@ public class NeighborhoodManager {
     }
 
     public synchronized void remove(NeighborInfo neighbor) {
-        if (System.currentTimeMillis() > neighbor.getLastTimeSeen().getTime() + ttlOfNeighbor) {
-            if (DEBUG) System.out.println(TAG + " - Removing neighbor " + neighbor.getHostID());
+        if (System.currentTimeMillis() > neighbor.getLastTimeSeen().getTime() + msBeforeAway) {
+            if (DEBUG) {
+            	System.out.println(TAG + " - Removing neighbor " + neighbor.getHostID());
+            }
             neighborsList.remove(neighbor);
         }
     }
@@ -96,9 +110,9 @@ public class NeighborhoodManager {
 
     public synchronized boolean isThereNeighborNotInterestedToMessageAndNotCached(
                                                                             ICeDROIDMessage msg) {
-        String channel = msg.getADCID();
+        String adcID = msg.getADCID();
         for (NeighborInfo neighbor : neighborsList) {
-            if (!neighbor.getNeighborSubscribedADCs().contains(channel) &&
+            if (!neighbor.getNeighborSubscribedADCs().contains(adcID) &&
                 !neighbor.getCachedMessages().contains(msg)) {
                 return true;
             }
@@ -107,9 +121,9 @@ public class NeighborhoodManager {
     }
 
     public synchronized boolean isThereNeighborSubscribedToChannel(ICeDROIDMessage msg) {
-        String channel = msg.getADCID();
+        String adcID = msg.getADCID();
         for (NeighborInfo neighbor : neighborsList) {
-            if (neighbor.getNeighborSubscribedADCs().contains(channel) &&
+            if (neighbor.getNeighborSubscribedADCs().contains(adcID) &&
                     !neighbor.getCachedMessages().contains(msg)) {
                 return true;
             }
@@ -118,11 +132,12 @@ public class NeighborhoodManager {
     }
 
     public synchronized boolean isThereNeighborWithoutThisMessage(ICeDROIDMessage msg) {
-        String channel = msg.getADCID();
-        //Is there a neighbor that isn't interested to this message (doesn't belong
-        //to the same message channel) and hasn't the message in its own cache?
+        String adcID = msg.getADCID();
+        /* Is there a neighbor that is not interested in this message (which does not
+         * belong to the same message adcID) and that does not have it in its cache?
+         */
         for (NeighborInfo neighbor : neighborsList) {
-            if (!neighbor.getNeighborSubscribedADCs().contains(channel) &&
+            if (!neighbor.getNeighborSubscribedADCs().contains(adcID) &&
                     !neighbor.getCachedMessages().contains(msg)) {
                 return true;
             }
@@ -133,9 +148,9 @@ public class NeighborhoodManager {
     public synchronized ArrayList<NeighborInfo> whoHasThisMessageButNotInterested(
                                                                             ICeDROIDMessage msg) {
         ArrayList<NeighborInfo> neighbors = new ArrayList<>(0);
-        String channel = msg.getADCID();
+        String adcID = msg.getADCID();
         for (NeighborInfo neighbor : neighborsList) {
-            if (!neighbor.getNeighborSubscribedADCs().contains(channel)) {
+            if (!neighbor.getNeighborSubscribedADCs().contains(adcID)) {
                 if (neighbor.getCachedMessages().contains(msg)) {
                     neighbors.add(neighbor);
                 }

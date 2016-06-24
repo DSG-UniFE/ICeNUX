@@ -59,7 +59,8 @@ public class SprayAndWaitThread extends Thread implements RoutingAlgorithm {
                 interrupt();
                 stopped = true;
                 lock.unlock();
-            } else {
+            }
+            else {
                 lock.unlock();
                 msg = messages.get(index);
 
@@ -69,11 +70,12 @@ public class SprayAndWaitThread extends Thread implements RoutingAlgorithm {
                         msg.setProperty("L", L);
                         ICeDROIDMessage cMsg = msg.clone();
                         if (neighborhoodManager.getNumberOfNeighbors() == 0) {
-                            intent.putExtra(ApplicationLevelDisseminationChannelService.EXTRA_ADC_MESSAGE,
-                                                                                            cMsg);
+                            intent.putExtra(
+                            		ApplicationLevelDisseminationChannelService.EXTRA_ADC_MESSAGE, cMsg);
                             Settings.getSettings().getADCThread().add(intent);
                         }
-                    } else {
+                    }
+                    else {
                         msgL = msg.getProperty("L");
 
                         ackL = ackLists.get(index);
@@ -93,29 +95,27 @@ public class SprayAndWaitThread extends Thread implements RoutingAlgorithm {
                             if (neighborhoodManager.isThereNeighborSubscribedToChannel(msg)) {
                                 ICeDROIDMessage cMsg = msg.clone();
                                 cMsg.setProperty("L", 0);
-                                intent.putExtra(ApplicationLevelDisseminationChannelService.EXTRA_ADC_MESSAGE,
-                                        cMsg);
+                                intent.putExtra(
+                                		ApplicationLevelDisseminationChannelService.EXTRA_ADC_MESSAGE, cMsg);
                                 Settings.getSettings().getADCThread().add(intent);
-                            } else {
-                                if (neighborhoodManager.
-                                        isThereNeighborNotInterestedToMessageAndNotCached(msg)) {
+                            }
+                            else if (neighborhoodManager.isThereNeighborNotInterestedToMessageAndNotCached(msg)) {
                                     ICeDROIDMessage cMsg = msg.clone();
                                     cMsg.setProperty("L", msgL);
                                     intent.putExtra(
                                          ApplicationLevelDisseminationChannelService.EXTRA_ADC_MESSAGE, cMsg);
                                     Settings.getSettings().getADCThread().add(intent);
-                                }
                             }
-
-                        } else {
+                        }
+                        else {
                             removeMessage(msg, index);
                             messageQueueManager.removeMessageFromForwardingQueue(msg);
                             messageQueueManager.removeMessageFromCachedMessages(msg);
                             messageQueueManager.addToCache(msg);
                         }
                     }
-
-                } else {
+                }
+                else {
                     removeMessage(msg, index);
                 }
 
@@ -124,7 +124,8 @@ public class SprayAndWaitThread extends Thread implements RoutingAlgorithm {
                 if (index + 1 >= messages.size()) {
                     index = 0;
                     waitForUpdate = true;
-                } else {
+                }
+                else {
                     index++;
                 }
                 lock.unlock();

@@ -37,8 +37,11 @@ public class Settings {
     private int receivePort;
     private int messageSize;
     private int helloMessagePeriod;
+	private int missedHelloMessagesBeforeAway;
     private RoutingAlgorithm routingAlgorithm;
     private int cacheSize;
+    private double adcCachingProbability;
+    private double adcForwardingProbability;
     private CachingStrategy cachingStrategy;
     private ForwardingStrategy forwardingStrategy;
     private ApplicationLevelDisseminationChannelService ADCThread;
@@ -103,6 +106,9 @@ public class Settings {
                     case "HelloMessagePeriod":
                         helloMessagePeriod = Integer.parseInt(setting[2]);
                         break;
+                    case "MissedHelloMessagesBeforeAway":
+                        missedHelloMessagesBeforeAway = Integer.parseInt(setting[2]);
+                        break;
                     case "RoutingAlgorithm":
                         if (setting[2].equals("SprayAndWait")) {
                             routingAlgorithm = RoutingAlgorithm.SPRAY_AND_WAIT;
@@ -114,6 +120,12 @@ public class Settings {
                         break;
                     case "CacheSize":
                         cacheSize = Integer.parseInt(setting[2]);
+                        break;
+                    case "ADCCachingProbability":
+                        adcCachingProbability = Double.parseDouble(setting[2]);
+                        break;
+                    case "ADCForwardingProbability":
+                        adcForwardingProbability = Double.parseDouble(setting[2]);
                         break;
                     case "CachingStrategy":
                         switch (setting[2]) {
@@ -342,9 +354,21 @@ public class Settings {
 		return helloMessagePeriod;
 	}
 
+	public int getMissedHelloMessagesBeforeAway() {
+		return missedHelloMessagesBeforeAway;
+	}
+
     public CachingStrategy getCachingStrategy() {
         return cachingStrategy;
     }
+
+	public double getADCCachingProbability() {
+		return adcCachingProbability;
+	}
+
+	public double getADCForwardingProbability() {
+		return adcForwardingProbability;
+	}
 
     public ForwardingStrategy getForwardingStrategy() {
         return forwardingStrategy;

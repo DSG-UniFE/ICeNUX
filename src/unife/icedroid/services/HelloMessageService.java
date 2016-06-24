@@ -61,7 +61,8 @@ public class HelloMessageService extends Thread {
             if (newChannels == null) {
                 // If there is a new neighbor then there's the need to recalculate messages to forward
                 intent.putExtra(NeighborInfo.EXTRA_NEW_NEIGHBOR, true);
-            } else {
+            }
+            else {
                 // If all neighbors have a message, then is no need to forward it anymore
                 intent.putExtra(NeighborInfo.EXTRA_NEIGHBOR_UPDATE, true);
                 intent.putExtra(NeighborInfo.EXTRA_NEW_CHANNELS, newChannels);
