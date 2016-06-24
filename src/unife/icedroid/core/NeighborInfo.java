@@ -13,18 +13,15 @@ public class NeighborInfo implements Serializable {
     private String hostID;
     private String hostUsername;
     private Date lastTimeSeen;
-    private ArrayList<String> hostChannels;
+    private ArrayList<String> hostSubscribedADCs;
     private ArrayList<ICeDROIDMessage> cachedMessages;
 
-    public NeighborInfo(String id,
-                        String username,
-                        Date time,
-                        ArrayList<String> channels,
+    public NeighborInfo(String id, String username, Date time, ArrayList<String> subscribedADCs,
                         ArrayList<ICeDROIDMessage> messages) {
         hostID = id;
         hostUsername = username;
         lastTimeSeen = time;
-        hostChannels = new ArrayList<>(channels);
+        hostSubscribedADCs = new ArrayList<>(subscribedADCs);
         cachedMessages = new ArrayList<>(messages);
     }
 
@@ -40,8 +37,8 @@ public class NeighborInfo implements Serializable {
         return lastTimeSeen;
     }
 
-    public synchronized ArrayList<String> getHostChannels() {
-        return new ArrayList<>(hostChannels);
+    public synchronized ArrayList<String> getNeighborSubscribedADCs() {
+        return new ArrayList<>(hostSubscribedADCs);
     }
 
     public synchronized ArrayList<ICeDROIDMessage> getCachedMessages() {
@@ -60,14 +57,6 @@ public class NeighborInfo implements Serializable {
         lastTimeSeen = time;
     }
 
-    public synchronized void setHostChannels(ArrayList<String> channels) {
-        hostChannels = new ArrayList<>(channels);
-    }
-
-    public synchronized void setCachedMessages(ArrayList<ICeDROIDMessage> messages) {
-        cachedMessages = new ArrayList<>(messages);
-    }
-
     public boolean hasInCache(ICeDROIDMessage msg) {
         synchronized (cachedMessages) {
             return cachedMessages.contains(msg);
@@ -77,14 +66,17 @@ public class NeighborInfo implements Serializable {
     public synchronized void update(NeighborInfo neighbor) {
         hostUsername = neighbor.hostUsername;
         lastTimeSeen = neighbor.lastTimeSeen;
-        hostChannels = neighbor.hostChannels;
+        hostSubscribedADCs = neighbor.hostSubscribedADCs;
         cachedMessages = neighbor.cachedMessages;
     }
 
     @Override
     public synchronized boolean equals(Object object) {
-        NeighborInfo nb = (NeighborInfo) object;
-        return hostID.equals(nb.hostID);
+    	if (!(object instanceof NeighborInfo)) {
+    		return false;
+    	}
+    	
+        return hostID.equals(((NeighborInfo) object).hostID);
     }
 
 }

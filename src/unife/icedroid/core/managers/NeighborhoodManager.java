@@ -47,8 +47,8 @@ public class NeighborhoodManager {
             ArrayList<String> newChannels = null;
             if (ni != null) {
                 newChannels = new ArrayList<>(0);
-                for (String c : neighbor.getHostChannels()) {
-                    if (!ni.getHostChannels().contains(c)) {
+                for (String c : neighbor.getNeighborSubscribedADCs()) {
+                    if (!ni.getNeighborSubscribedADCs().contains(c)) {
                         newChannels.add(c);
                     }
                 }
@@ -96,7 +96,7 @@ public class NeighborhoodManager {
                                                                             ICeDROIDMessage msg) {
         String channel = msg.getADCID();
         for (NeighborInfo neighbor : neighborsList) {
-            if (!neighbor.getHostChannels().contains(channel) &&
+            if (!neighbor.getNeighborSubscribedADCs().contains(channel) &&
                 !neighbor.getCachedMessages().contains(msg)) {
                 return true;
             }
@@ -107,7 +107,7 @@ public class NeighborhoodManager {
     public synchronized boolean isThereNeighborSubscribedToChannel(ICeDROIDMessage msg) {
         String channel = msg.getADCID();
         for (NeighborInfo neighbor : neighborsList) {
-            if (neighbor.getHostChannels().contains(channel) &&
+            if (neighbor.getNeighborSubscribedADCs().contains(channel) &&
                     !neighbor.getCachedMessages().contains(msg)) {
                 return true;
             }
@@ -120,7 +120,7 @@ public class NeighborhoodManager {
         //Is there a neighbor that isn't interested to this message (doesn't belong
         //to the same message channel) and hasn't the message in its own cache?
         for (NeighborInfo neighbor : neighborsList) {
-            if (!neighbor.getHostChannels().contains(channel) &&
+            if (!neighbor.getNeighborSubscribedADCs().contains(channel) &&
                     !neighbor.getCachedMessages().contains(msg)) {
                 return true;
             }
@@ -133,7 +133,7 @@ public class NeighborhoodManager {
         ArrayList<NeighborInfo> neighbors = new ArrayList<>(0);
         String channel = msg.getADCID();
         for (NeighborInfo neighbor : neighborsList) {
-            if (!neighbor.getHostChannels().contains(channel)) {
+            if (!neighbor.getNeighborSubscribedADCs().contains(channel)) {
                 if (neighbor.getCachedMessages().contains(msg)) {
                     neighbors.add(neighbor);
                 }
