@@ -118,8 +118,7 @@ public class SubscriptionListManager {
     }
 
     public synchronized boolean isSubscribedToMessage(TxtMessage msg) {
-        Subscription subscription = new Subscription(msg.getChannel(), msg.getGroup());
-        return subscriptionsList.contains(subscription);
+        return subscriptionsList.contains(new Subscription(msg.getChannel(), msg.getGroup()));
     }
 
     public synchronized ArrayList<Subscription> getNewSubscriptions(ArrayList<Subscription> oldSubscriptions) {
