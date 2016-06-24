@@ -5,20 +5,20 @@ import java.io.Serializable;
 public class Subscription implements Serializable {
     public final static String EXTRA_SUBSCRIPTION = "unife.icedroid.SUBSCRIPTION";
 
-    private String channelID;
-    private String groupName;
+    private String adcID;
+    private String appID;
 
-    public Subscription(String channel, String group) {
-        channelID = channel;
-        groupName = group;
+    public Subscription(String adcIdentifier, String applicationID) {
+        adcID = adcIdentifier;
+        appID = applicationID;
     }
 
     public String getADCID() {
-        return channelID;
+        return adcID;
     }
 
     public String getApplicationName() {
-        return groupName;
+        return appID;
     }
 
     @Override
@@ -26,18 +26,19 @@ public class Subscription implements Serializable {
     	if (!(object instanceof Subscription)) {
     		return false;
     	}
+    	
         Subscription subscription = (Subscription) object;
-        return (channelID.equals(subscription.channelID) &&
-                groupName.equals(subscription.groupName));
+        return (adcID.equals(subscription.adcID) &&
+                appID.equals(subscription.appID));
     }
 
     @Override
     public String toString() {
-        return channelID + ":" + groupName;
+        return adcID + ":" + appID;
     }
     
     public String getSubscriptionFileName() {
-        return channelID + "." + groupName;
+        return adcID + "." + appID;
     }
 
 }
