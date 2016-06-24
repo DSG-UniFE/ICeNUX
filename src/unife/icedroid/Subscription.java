@@ -23,6 +23,9 @@ public class Subscription implements Serializable {
 
     @Override
     public boolean equals(Object object) {
+    	if (!(object instanceof Subscription)) {
+    		return false;
+    	}
         Subscription subscription = (Subscription) object;
         return (channelID.equals(subscription.channelID) &&
                 groupName.equals(subscription.groupName));
