@@ -59,9 +59,9 @@ public class BroadcastSendThread extends Thread {
                         String msg = ex.getMessage();
                         if (DEBUG) {
                         	if (msg != null) {
-                        		msg = TAG + ": " + msg;
+                        		msg = TAG + " - " + msg;
                         	} else {
-                        		msg = TAG + ": " + "Impossible to convert to byte: " + baseMessage;
+                        		msg = TAG + " - " + "Impossible to convert to byte: " + baseMessage;
                         	}
                         	System.out.println(msg);
                         }
@@ -78,9 +78,9 @@ public class BroadcastSendThread extends Thread {
                 String msg = ex.getMessage();
                 if (DEBUG) {
                 	if (msg != null) {
-                		msg = TAG + ": " + msg;
+                		msg = TAG + " - " + msg;
                 	} else {
-                		msg = TAG + ": " + "Closing BroadcastReceiveThread";
+                		msg = TAG + " - " + "Closing BroadcastReceiveThread";
                 	}
                 	System.out.println(msg);
                 }

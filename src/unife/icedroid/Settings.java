@@ -27,9 +27,9 @@ public class Settings {
                         String msg = ex.getMessage();
                         if (DEBUG) {
                         	if (msg != null) {
-                        		msg = TAG + ": " + msg;
+                        		msg = TAG + " - " + msg;
                         	} else {
-                        		msg = TAG + ": " + "Error loading settings!";
+                        		msg = TAG + " - " + "Error loading settings!";
                         	}
                         	System.out.println(msg);
                         }

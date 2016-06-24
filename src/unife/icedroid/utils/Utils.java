@@ -86,7 +86,7 @@ public class Utils {
         } catch (IOException ioex) {
             String msg = ioex.getMessage();
             if (DEBUG) {
-            	msg = TAG + ": " + ((msg != null) ? msg : 
+            	msg = TAG + " - " + ((msg != null) ? msg : 
             		"rootExec() - error reading results of the command: " + commandToRun);
             	System.err.println(msg);
             }
@@ -95,7 +95,7 @@ public class Utils {
         catch (InterruptedException iex) {
             String msg = iex.getMessage();
             if (DEBUG) {
-            	msg = TAG + ": " + ((msg != null) ? msg :
+            	msg = TAG + " - " + ((msg != null) ? msg :
             		"rootExec() - error reading results of the command: " + commandToRun);
             	System.err.println(msg);
             }
@@ -152,7 +152,7 @@ public class Utils {
         } catch (IOException ioex) {
             String msg = ioex.getMessage();
             if (DEBUG) {
-            	msg = TAG + ": " + ((msg != null) ? msg : 
+            	msg = TAG + " - " + ((msg != null) ? msg : 
             		"exec() - error reading results of the command: " + commandToRun);
 	            System.err.println(msg);
             }

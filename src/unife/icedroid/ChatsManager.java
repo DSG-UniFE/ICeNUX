@@ -50,7 +50,7 @@ public class ChatsManager implements OnMessageReceiveListener {
         } catch (Exception ex) {
             String msg = ex.getMessage();
             if (DEBUG) {
-            	msg = TAG + ": " + ((msg != null) ? msg : "Error writing to file");
+            	msg = TAG + " - " + ((msg != null) ? msg : "Error writing to file");
             	System.err.println(msg);
             }
         }
@@ -63,7 +63,7 @@ public class ChatsManager implements OnMessageReceiveListener {
                 saveMessageInConversation(txt);
             }
         } catch (Exception ex) {
-        	System.err.println(TAG + ": error receiving the message with ID " +
+        	System.err.println(TAG + " - error receiving the message with ID " +
         			message.getMsgID() + " of size " + message.getSize());
         }
     }

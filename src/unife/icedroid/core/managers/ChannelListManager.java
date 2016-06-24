@@ -45,7 +45,7 @@ public class ChannelListManager {
         } catch (Exception ex) {
             String msg = ex.getMessage();
             if (DEBUG) {
-            	msg = TAG + ": " + ((msg != null) ? msg : "Error loading channel list");
+            	msg = TAG + " - " + ((msg != null) ? msg : "Error loading channel list");
             	System.err.println(msg);
             }
         }
@@ -92,7 +92,7 @@ public class ChannelListManager {
             } catch (Exception ex) {
                 String msg = ex.getMessage();
                 if (DEBUG) {
-                	msg = TAG + ": " + ((msg != null) ? msg : "Error sticking to channel");
+                	msg = TAG + " - " + ((msg != null) ? msg : "Error sticking to channel");
                 	System.out.println(msg);
                 }
             }

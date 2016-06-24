@@ -143,7 +143,7 @@ public class NICManager {
         } catch(Exception ex) {
             String msg = ex.getMessage();
             if (DEBUG) {
-            	msg = TAG + ": " + ((msg != null) ?  msg :
+            	msg = TAG + " - " + ((msg != null) ?  msg :
             		"startWifiAdhoc(): Impossible to enable Wifi Ad-Hoc");
             	System.err.println(msg);
             }
@@ -176,7 +176,7 @@ public class NICManager {
             Utils.rootExec(cmd);
             } catch (Exception ex) {
                 String msg = ex.getMessage();
-            	msg = TAG + ": " + ((msg != null) ?  msg :
+            	msg = TAG + " - " + ((msg != null) ?  msg :
             		"Impossible to set an address for the NIC " + networkInterface);
             	System.err.println(msg);
                 
@@ -237,7 +237,7 @@ public class NICManager {
         } catch (Exception ex) {
             String msg = ex.getMessage();
             if (DEBUG) {
-            	msg = TAG + ": " + ((msg != null) ?  msg :
+            	msg = TAG + " - " + ((msg != null) ?  msg :
             		"stopWifiAdhoc(): Impossible to disable Wifi Ad-Hoc");
             	System.out.println(msg);
             }
@@ -263,7 +263,7 @@ public class NICManager {
 	        } catch (Exception ex) {
 	        	String msg = ex.getMessage();
 	            if (DEBUG) {
-	            	msg = TAG + ": " + ((msg != null) ?  msg :
+	            	msg = TAG + " - " + ((msg != null) ?  msg :
 	            		"stopWifiAdhoc(): Impossible to disable Wifi Ad-Hoc");
 	            	System.out.println(msg);
 	            }
@@ -281,7 +281,7 @@ public class NICManager {
 	        } catch (Exception ex) {
 	        	String msg = ex.getMessage();
 	            if (DEBUG) {
-	            	msg = TAG + ": " + ((msg != null) ?  msg :
+	            	msg = TAG + " - " + ((msg != null) ?  msg :
 	            		"stopWifiAdhoc(): Impossible to disable Wifi Ad-Hoc");
 	            	System.out.println(msg);
 	            }
@@ -306,7 +306,7 @@ public class NICManager {
         } catch (Exception ex) {
             String msg = ex.getMessage();
             if (DEBUG) {
-            	msg = TAG + ": " + ((msg != null) ?  msg :
+            	msg = TAG + " - " + ((msg != null) ?  msg :
             		"isIPAvailable(): Impossible to get results from the arping command");
             	System.err.println(msg);
             }

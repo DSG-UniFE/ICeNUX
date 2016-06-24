@@ -75,7 +75,7 @@ public class ChatWindow {
 			            ChatsManager.getInstance().saveMessageInConversation(message);
 		            }
 		            catch (IOException ioex) {
-		            	System.err.println(TAG + ": " + ioex.getMessage());
+		            	System.err.println(TAG + " - " + ioex.getMessage());
 		            }
 		            ICeDROID.getInstance().send(message);
 		        }

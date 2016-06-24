@@ -149,7 +149,7 @@ public class SprayAndWaitThread extends Thread implements RoutingAlgorithm {
         lock.unlock();
 
         if (DEBUG && result) {
-        	System.out.println(TAG + ": Added message with ID " + msg.getMsgID() + " and size " +
+        	System.out.println(TAG + " - Added message with ID " + msg.getMsgID() + " and size " +
         			msg.getSize() + " to the queue for transmission");
         }
         
@@ -165,7 +165,7 @@ public class SprayAndWaitThread extends Thread implements RoutingAlgorithm {
         lock.unlock();
 
         if (DEBUG) {
-        	String info = TAG + ": " + ((message != null) ? "Removed message with ID " +
+        	String info = TAG + " - " + ((message != null) ? "Removed message with ID " +
         			message.getMsgID() + " and size " + message.getSize() + " from the cache" :
         				"No message found at index " + index);
         	System.out.println(info);

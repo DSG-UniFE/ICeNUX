@@ -44,7 +44,7 @@ public class SubscriptionListManager {
         } catch (Exception ex) {
             String msg = ex.getMessage();
             if (DEBUG) {
-            	msg = TAG + ": " + ((msg != null) ? msg : "Error loading subscriptions list");
+            	msg = TAG + " - " + ((msg != null) ? msg : "Error loading subscriptions list");
             	System.err.println(msg);
             }
         }
@@ -105,7 +105,7 @@ public class SubscriptionListManager {
             } catch (Exception ex) {
                 String msg = ex.getMessage();
                 if (DEBUG) {
-                	msg = TAG + ": " + ((msg != null) ? msg : "Error subscribing");
+                	msg = TAG + " - " + ((msg != null) ? msg : "Error subscribing");
                 	System.err.println(msg);
                 }
             }

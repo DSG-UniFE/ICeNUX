@@ -52,9 +52,9 @@ public class MessageDispatcher {
                 /*String msg = ex.getMessage();
                 if (DEBUG) {
                 	if (msg != null) {
-                		msg = TAG + ": " + msg;
+                		msg = TAG + " - " + msg;
                 	} else {
-                		msg = TAG + ": " + "deliver(): An error occurred";
+                		msg = TAG + " - " + "deliver(): An error occurred";
                 	}
                 	System.out.println(msg);
                 }*/

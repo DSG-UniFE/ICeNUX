@@ -210,9 +210,9 @@ public class Settings {
                         String msg = ex.getMessage();
                         if (DEBUG) {
                         	if (msg != null) {
-                        		msg = TAG + ": " + msg;
+                        		msg = TAG + " - " + msg;
                         	} else {
-                        		msg = TAG + ": " + "Error loading settings!";
+                        		msg = TAG + " - " + "Error loading settings!";
                         	}
                         	System.out.println(msg);
                         }
@@ -253,7 +253,7 @@ public class Settings {
     			System.exit(-1);
     		}
             if (DEBUG) {
-            	System.out.println (TAG + ": Ip address set to " + hostIP);
+            	System.out.println (TAG + " - Ip address set to " + hostIP);
             }
     	}
         return hostIP;
@@ -275,7 +275,7 @@ public class Settings {
             hostIP = null;
             if (DEBUG) {
                 String msg = sex.getMessage();
-            	msg = TAG + ": " + ((msg != null) ? msg : 
+            	msg = TAG + " - " + ((msg != null) ? msg : 
             		"Error detected while retrieving the NIC " + networkInterface);
             	System.err.println(msg);
         	}
@@ -299,7 +299,7 @@ public class Settings {
             } catch (Exception ex) {
             	if (DEBUG) {
 	                String msg = ex.getMessage();
-	            	msg = TAG + ": " + ((msg != null) ? msg :
+	            	msg = TAG + " - " + ((msg != null) ? msg :
 	            		"Impossible to check the unicity of the IP address");
 	            	System.err.println(msg);
             	}
@@ -365,9 +365,9 @@ public class Settings {
             String msg = ex.getMessage();
             if (DEBUG) {
             	if (msg != null) {
-            		msg = TAG + ": " + msg;
+            		msg = TAG + " - " + msg;
             	} else {
-            		msg = TAG + ": " + "close(): Closing error!";
+            		msg = TAG + " - " + "close(): Closing error!";
             	}
             	System.out.println(msg);
             }
