@@ -62,9 +62,9 @@ public class ChannelListManager {
         return instance;
     }
 
-    public synchronized void subscribe(String channel) {
-        if (!channelList.contains(channel)) {
-            channelList.add(channel);
+    public synchronized void subscribe(String adcID) {
+        if (!channelList.contains(adcID)) {
+            channelList.add(adcID);
             try {
             	FileOutputStream fos = null;
             	try {
@@ -79,10 +79,10 @@ public class ChannelListManager {
                     fos = new FileOutputStream(Constants.CHANNELS_FILE_NAME, true);
             	}
             	
-                fos.write((channel + "\n").getBytes());
+                fos.write((adcID + "\n").getBytes());
                 fos.close();
                 if (DEBUG) {
-                	System.out.println(TAG + " - performed subscription to the channel: " + channel);
+                	System.out.println(TAG + " - performed subscription to the channel: " + adcID);
                 }
 
                 Intent intent = new Intent();
