@@ -1,6 +1,6 @@
 package unife.icedroid.core;
 
-import unife.icedroid.services.ApplevDisseminationChannelService.OnMessageReceiveListener;
+import unife.icedroid.services.ApplicationLevelDisseminationChannelService.OnMessageReceiveListener;
 import unife.icedroid.core.managers.ChannelListManager;
 import unife.icedroid.core.managers.MessageQueueManager;
 import unife.icedroid.core.managers.NeighborhoodManager;

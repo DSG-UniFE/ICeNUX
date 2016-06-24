@@ -13,7 +13,7 @@ public class HelloMessageService extends Thread {
     private MessageQueueManager messageQueueManager;
     private Timer helloMessageTimer;
     private ArrayList<Intent> intents;
-    private ApplevDisseminationChannelService ADCThread;
+    private ApplicationLevelDisseminationChannelService ADCThread;
     private final int helloMessagePeriod;
 
     public HelloMessageService() {
@@ -28,7 +28,7 @@ public class HelloMessageService extends Thread {
             @Override
             public void run() {
                 HelloMessage helloMessage = new HelloMessage();
-                messageQueueManager.addToForwardingMessages(helloMessage);
+                messageQueueManager.addToForwardingQueue(helloMessage);
             }
 
         }, new Date(System.currentTimeMillis()), helloMessagePeriod);

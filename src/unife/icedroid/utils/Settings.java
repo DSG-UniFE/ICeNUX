@@ -1,11 +1,11 @@
 package unife.icedroid.utils;
 
 import unife.icedroid.exceptions.RoutingAlgorithmNotFound;
-import unife.icedroid.services.ApplevDisseminationChannelService;
+import unife.icedroid.services.ApplicationLevelDisseminationChannelService;
 import unife.icedroid.services.HelloMessageService;
 import unife.icedroid.services.BroadcastReceiveThread;
 import unife.icedroid.services.BroadcastSendThread;
-import unife.icedroid.services.ApplevDisseminationChannelService.OnMessageReceiveListener;
+import unife.icedroid.services.ApplicationLevelDisseminationChannelService.OnMessageReceiveListener;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -41,7 +41,7 @@ public class Settings {
     private int cacheSize;
     private CachingStrategy cachingStrategy;
     private ForwardingStrategy forwardingStrategy;
-    private ApplevDisseminationChannelService ADCThread;
+    private ApplicationLevelDisseminationChannelService ADCThread;
     private HelloMessageService HMThread;
     private BroadcastReceiveThread rcvThread;
     private BroadcastSendThread sendThread;
@@ -175,7 +175,7 @@ public class Settings {
         /** Starting various services for the app **/
         /*******************************************/
         //Application-level Dissemination Channel Service
-        ADCThread = new ApplevDisseminationChannelService(listener);
+        ADCThread = new ApplicationLevelDisseminationChannelService(listener);
         ADCThread.start();
         //BroadcastSendService
         sendThread = new BroadcastSendThread();
@@ -350,7 +350,7 @@ public class Settings {
         return forwardingStrategy;
     }
 
-    public ApplevDisseminationChannelService getADCThread() {
+    public ApplicationLevelDisseminationChannelService getADCThread() {
         return ADCThread;
     }
     

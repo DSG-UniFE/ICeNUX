@@ -16,7 +16,7 @@ public class MessageQueueManager {
 
     private ArrayList<ICeDROIDMessage> cachedMessages;
     private ArrayList<ICeDROIDMessage> discardedMessages;
-    private ArrayList<BaseMessage> forwardingMessages;
+    private ArrayList<BaseMessage> forwardingQueue;
     private Timer cachedMessagesTimer;
     private Timer discardedMessagesTimer;
     private MessageCachingStrategy cachingStrategy;
@@ -28,7 +28,7 @@ public class MessageQueueManager {
     private MessageQueueManager() {
         cachedMessages = new ArrayList<>(0);
         discardedMessages = new ArrayList<>(0);
-        forwardingMessages = new ArrayList<>(0);
+        forwardingQueue = new ArrayList<>(0);
         indexForwardingMessages = 0;
 
         cachedMessagesTimer = new Timer();
@@ -68,7 +68,7 @@ public class MessageQueueManager {
                 cachingStrategy.add(cachedMessages, msg);
             }
 
-            //If the msg TTL isn't infinite then set a timer to delete it.
+            //If the msg TTL is not infinite, then set a timer for future deletion
             if (msg.getTtl() != BaseMessage.INFINITE_TTL) {
                 cachedMessagesTimer.schedule(new TimerTask() {
 
@@ -92,7 +92,7 @@ public class MessageQueueManager {
                 discardedMessages.add(msg);
             }
 
-            //If the msg TTL isn't infinite then set a timer to delete it.
+            //If the msg TTL is not infinite, then set a timer for future deletion
             if (msg.getTtl() != BaseMessage.INFINITE_TTL) {
                 discardedMessagesTimer.schedule(new TimerTask() {
 
@@ -106,10 +106,10 @@ public class MessageQueueManager {
         }
     }
 
-    public void addToForwardingMessages(BaseMessage msg) {
-        synchronized (forwardingMessages) {
-            forwardingStrategy.add(forwardingMessages, msg, indexForwardingMessages);
-            forwardingMessages.notifyAll();
+    public void addToForwardingQueue(BaseMessage msg) {
+        synchronized (forwardingQueue) {
+            forwardingStrategy.add(forwardingQueue, msg, indexForwardingMessages);
+            forwardingQueue.notifyAll();
         }
     }
 
@@ -125,9 +125,9 @@ public class MessageQueueManager {
         }
     }
 
-    public ArrayList<BaseMessage> getForwardingMessages() {
-        synchronized (forwardingMessages) {
-            return new ArrayList<>(forwardingMessages);
+    public ArrayList<BaseMessage> getForwardingQueue() {
+        synchronized (forwardingQueue) {
+            return new ArrayList<>(forwardingQueue);
         }
     }
 
@@ -141,17 +141,17 @@ public class MessageQueueManager {
         removeFromQueue(cachedMessages, msg);
     }
 
-    public void removeMessageFromForwardingMessages(BaseMessage msg) {
-       removeFromQueue(forwardingMessages, msg);
+    public void removeMessageFromForwardingQueue(BaseMessage msg) {
+       removeFromQueue(forwardingQueue, msg);
     }
 
-    public void removeICeDROIDMessagesFromForwardingMessages() {
-        synchronized (forwardingMessages) {
-            ArrayList<BaseMessage> fm = getForwardingMessages();
+    public void removeICeDROIDMessagesFromForwardingQueue() {
+        synchronized (forwardingQueue) {
+            ArrayList<BaseMessage> fm = getForwardingQueue();
 
             for (BaseMessage m : fm) {
                 if (m.getTypeOfMessage().equals(ICeDROIDMessage.ICEDROID_MESSAGE)) {
-                    forwardingMessages.remove(m);
+                    forwardingQueue.remove(m);
                 }
             }
         }
@@ -159,28 +159,28 @@ public class MessageQueueManager {
 
     public BaseMessage getMessageToSend() throws InterruptedException {
         BaseMessage message = null;
-        synchronized (forwardingMessages) {
+        synchronized (forwardingQueue) {
             while (message == null) {
-                while (forwardingMessages.size() == 0) {
+                while (forwardingQueue.size() == 0) {
                     try {
-                        forwardingMessages.wait();
+                        forwardingQueue.wait();
                     } catch (InterruptedException ex) {
                         throw ex;
                     }
                 }
 
-                if (indexForwardingMessages >= forwardingMessages.size()) {
+                if (indexForwardingMessages >= forwardingQueue.size()) {
                     indexForwardingMessages = 0;
                 }
 
-                message = forwardingMessages.get(indexForwardingMessages);
+                message = forwardingQueue.get(indexForwardingMessages);
 
-                //Hellomessages must be sent just once
+                // HELLO messages must be sent only once
                 if (message.getTypeOfMessage().equals(HelloMessage.HELLO_MESSAGE)) {
-                    forwardingMessages.remove(indexForwardingMessages);
+                    forwardingQueue.remove(indexForwardingMessages);
                 } else {
                     if (isExpired(message)) {
-                        forwardingMessages.remove(indexForwardingMessages);
+                        forwardingQueue.remove(indexForwardingMessages);
                         message = null;
                     } else {
                         indexForwardingMessages++;

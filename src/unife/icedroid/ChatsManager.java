@@ -2,7 +2,7 @@ package unife.icedroid;
 
 import unife.icedroid.core.ICeDROIDMessage;
 import unife.icedroid.resources.Constants;
-import unife.icedroid.services.ApplevDisseminationChannelService.OnMessageReceiveListener;
+import unife.icedroid.services.ApplicationLevelDisseminationChannelService.OnMessageReceiveListener;
 
 import java.io.File;
 import java.io.FileOutputStream;

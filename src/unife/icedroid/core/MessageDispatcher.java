@@ -1,6 +1,6 @@
 package unife.icedroid.core;
 
-import unife.icedroid.services.ApplevDisseminationChannelService;
+import unife.icedroid.services.ApplicationLevelDisseminationChannelService;
 import unife.icedroid.utils.Settings;
 import java.net.DatagramPacket;
 import java.io.ObjectInputStream;
@@ -17,9 +17,8 @@ public class MessageDispatcher {
     	s = Settings.getSettings();
     }
 
-    
+    // Received a new packet from the NIC
     public void dispatch(DatagramPacket packet) {
-        //DatagramPacket packet;
         ByteArrayInputStream byteArrayInputStream;
         ObjectInputStream rawMessage;
         BaseMessage baseMessage;
@@ -39,26 +38,16 @@ public class MessageDispatcher {
 
                     if (baseMessage.getTypeOfMessage().equals(ICeDROIDMessage.ICEDROID_MESSAGE)) {
                         intent = new Intent();
-                        intent.putExtra(ApplevDisseminationChannelService.EXTRA_ADC_MESSAGE,
-                                                                                    baseMessage);
+                        intent.putExtra(ApplicationLevelDisseminationChannelService.EXTRA_ADC_MESSAGE, baseMessage);
                         Settings.getSettings().getADCThread().add(intent);
                     } else {
                         intent = new Intent();
                         intent.putExtra(HelloMessage.EXTRA_HELLO_MESSAGE, baseMessage);
-                        Settings.getSettings().getHMThread().add(intent);
+                        s.getHMThread().add(intent);
                     }
                 }
             } catch (Exception ex) {
-                /*String msg = ex.getMessage();
-                if (DEBUG) {
-                	if (msg != null) {
-                		msg = TAG + " - " + msg;
-                	} else {
-                		msg = TAG + " - " + "deliver(): An error occurred";
-                	}
-                	System.out.println(msg);
-                }*/
-            	System.out.println(ex);
+            	System.err.println(TAG + " - " + ex.getMessage());
             }
     }
 }

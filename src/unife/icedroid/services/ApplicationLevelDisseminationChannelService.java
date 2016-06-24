@@ -10,7 +10,7 @@ import unife.icedroid.utils.Settings;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class ApplevDisseminationChannelService extends Thread {
+public class ApplicationLevelDisseminationChannelService extends Thread {
     private static final String TAG = "AppDissChannelService";
     private static final boolean DEBUG = true;
 
@@ -25,7 +25,7 @@ public class ApplevDisseminationChannelService extends Thread {
     private OnMessageReceiveListener onMessageReceiveListener;
 
 
-    public ApplevDisseminationChannelService(OnMessageReceiveListener listener) {
+    public ApplicationLevelDisseminationChannelService(OnMessageReceiveListener listener) {
         messageQueueManager = MessageQueueManager.getMessageQueueManager();
         channelListManager = ChannelListManager.getChannelListManager();
         neighborhoodManager = NeighborhoodManager.getNeighborhoodManager();
@@ -56,7 +56,7 @@ public class ApplevDisseminationChannelService extends Thread {
                 if (iceMessage.getHostID().equals(Settings.getSettings().getHostID())) {
                     switch (Settings.getSettings().getRoutingAlgorithm()) {
                         case SPRAY_AND_WAIT:
-                            messageQueueManager.removeMessageFromForwardingMessages(iceMessage);
+                            messageQueueManager.removeMessageFromForwardingQueue(iceMessage);
                             messageQueueManager.removeMessageFromCachedMessages(iceMessage);
                             messageQueueManager.addToCache(iceMessage);
                             forwardMessage(iceMessage, true);
@@ -116,12 +116,13 @@ public class ApplevDisseminationChannelService extends Thread {
                 		intent.getExtra(HelloMessage.EXTRA_HELLO_MESSAGE);
 
                 if (intent.hasExtra(NeighborInfo.EXTRA_NEW_NEIGHBOR)) {
-                    messageQueueManager.removeICeDROIDMessagesFromForwardingMessages();
+                	// There is a new neighbor -> recompute list of messages to forward
+                    messageQueueManager.removeICeDROIDMessagesFromForwardingQueue();
 
                     for (ICeDROIDMessage msg : messageQueueManager.getCachedMessages()) {
                         forwardMessage(msg, false);
                     }
-
+                    
                 } else {
                     //If everyone has a message then stop forwarding it
                     if (DEBUG)
@@ -133,18 +134,18 @@ public class ApplevDisseminationChannelService extends Thread {
                     for (ICeDROIDMessage msg : messageQueueManager.getCachedMessages()) {
                         if (newChannels.contains(msg.getADCID())) {
                             if (!n.hasInCache(msg)) {
-                                messageQueueManager.addToForwardingMessages(msg);
+                                messageQueueManager.addToForwardingQueue(msg);
                             }
                         }
                     }
 
-                    ArrayList<BaseMessage> fm = messageQueueManager.getForwardingMessages();
+                    ArrayList<BaseMessage> fm = messageQueueManager.getForwardingQueue();
 
                     for (BaseMessage m : fm) {
                         if (m.getTypeOfMessage().equals(ICeDROIDMessage.ICEDROID_MESSAGE)) {
                             if (neighborhoodManager.everyoneHasThisMessage(m)) {
                                 if (DEBUG) System.out.println(TAG + " Handling an HelloMessage: removed " + m);
-                                messageQueueManager.removeMessageFromForwardingMessages(m);
+                                messageQueueManager.removeMessageFromForwardingQueue(m);
                             }
                         }
                     }
@@ -192,7 +193,7 @@ public class ApplevDisseminationChannelService extends Thread {
         }
 
         if (send) {
-            messageQueueManager.addToForwardingMessages(msg);
+            messageQueueManager.addToForwardingQueue(msg);
         }
 
     }

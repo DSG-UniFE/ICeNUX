@@ -5,7 +5,7 @@ import unife.icedroid.core.NeighborInfo;
 import unife.icedroid.core.ICeDROIDMessage;
 import unife.icedroid.core.managers.MessageQueueManager;
 import unife.icedroid.core.managers.NeighborhoodManager;
-import unife.icedroid.services.ApplevDisseminationChannelService;
+import unife.icedroid.services.ApplicationLevelDisseminationChannelService;
 import unife.icedroid.utils.Settings;
 import java.util.ArrayList;
 import java.util.concurrent.locks.Lock;
@@ -69,7 +69,7 @@ public class SprayAndWaitThread extends Thread implements RoutingAlgorithm {
                         msg.setProperty("L", L);
                         ICeDROIDMessage cMsg = msg.clone();
                         if (neighborhoodManager.getNumberOfNeighbors() == 0) {
-                            intent.putExtra(ApplevDisseminationChannelService.EXTRA_ADC_MESSAGE,
+                            intent.putExtra(ApplicationLevelDisseminationChannelService.EXTRA_ADC_MESSAGE,
                                                                                             cMsg);
                             Settings.getSettings().getADCThread().add(intent);
                         }
@@ -93,7 +93,7 @@ public class SprayAndWaitThread extends Thread implements RoutingAlgorithm {
                             if (neighborhoodManager.isThereNeighborSubscribedToChannel(msg)) {
                                 ICeDROIDMessage cMsg = msg.clone();
                                 cMsg.setProperty("L", 0);
-                                intent.putExtra(ApplevDisseminationChannelService.EXTRA_ADC_MESSAGE,
+                                intent.putExtra(ApplicationLevelDisseminationChannelService.EXTRA_ADC_MESSAGE,
                                         cMsg);
                                 Settings.getSettings().getADCThread().add(intent);
                             } else {
@@ -102,14 +102,14 @@ public class SprayAndWaitThread extends Thread implements RoutingAlgorithm {
                                     ICeDROIDMessage cMsg = msg.clone();
                                     cMsg.setProperty("L", msgL);
                                     intent.putExtra(
-                                         ApplevDisseminationChannelService.EXTRA_ADC_MESSAGE, cMsg);
+                                         ApplicationLevelDisseminationChannelService.EXTRA_ADC_MESSAGE, cMsg);
                                     Settings.getSettings().getADCThread().add(intent);
                                 }
                             }
 
                         } else {
                             removeMessage(msg, index);
-                            messageQueueManager.removeMessageFromForwardingMessages(msg);
+                            messageQueueManager.removeMessageFromForwardingQueue(msg);
                             messageQueueManager.removeMessageFromCachedMessages(msg);
                             messageQueueManager.addToCache(msg);
                         }
