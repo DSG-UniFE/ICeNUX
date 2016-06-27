@@ -157,6 +157,7 @@ public class MessageQueueManager {
         }
     }
 
+    // Returns the next message to send from the forwarding queue
     public BaseMessage getMessageToSend() throws InterruptedException {
         BaseMessage message = null;
         synchronized (forwardingQueue) {
