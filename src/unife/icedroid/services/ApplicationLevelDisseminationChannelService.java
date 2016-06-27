@@ -172,6 +172,7 @@ public class ApplicationLevelDisseminationChannelService extends Thread {
     	onMessageReceiveListener = listener;
     }
 
+    // Applies ADC filtering and enques the message for forwarding
     private void forwardMessage(ICeDROIDMessage msg, boolean thisHostMessage) {
         boolean send = false;
         switch (settings.getRoutingAlgorithm()) {
