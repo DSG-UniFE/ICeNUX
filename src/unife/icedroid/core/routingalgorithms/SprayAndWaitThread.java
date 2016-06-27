@@ -24,6 +24,7 @@ public class SprayAndWaitThread extends Thread implements RoutingAlgorithm {
     
     NeighborhoodManager neighborhoodManager;
     MessageQueueManager messageQueueManager;
+    Settings settings;
 
     public SprayAndWaitThread() {
         lock = new ReentrantLock();
@@ -33,6 +34,7 @@ public class SprayAndWaitThread extends Thread implements RoutingAlgorithm {
         stopped = false;
         neighborhoodManager = NeighborhoodManager.getNeighborhoodManager();
         messageQueueManager = MessageQueueManager.getMessageQueueManager();
+        settings = Settings.getSettings();
     }
 
     @Override
@@ -72,7 +74,7 @@ public class SprayAndWaitThread extends Thread implements RoutingAlgorithm {
                         if (neighborhoodManager.getNumberOfNeighbors() == 0) {
                             intent.putExtra(
                             		ApplicationLevelDisseminationChannelService.EXTRA_ADC_MESSAGE, cMsg);
-                            Settings.getSettings().getADCThread().add(intent);
+                            settings.getADCThread().add(intent);
                         }
                     }
                     else {
@@ -97,14 +99,14 @@ public class SprayAndWaitThread extends Thread implements RoutingAlgorithm {
                                 cMsg.setProperty("L", 0);
                                 intent.putExtra(
                                 		ApplicationLevelDisseminationChannelService.EXTRA_ADC_MESSAGE, cMsg);
-                                Settings.getSettings().getADCThread().add(intent);
+                                settings.getADCThread().add(intent);
                             }
                             else if (neighborhoodManager.isThereNeighborNotInterestedToMessageAndNotCached(msg)) {
                                     ICeDROIDMessage cMsg = msg.clone();
                                     cMsg.setProperty("L", msgL);
                                     intent.putExtra(
                                          ApplicationLevelDisseminationChannelService.EXTRA_ADC_MESSAGE, cMsg);
-                                    Settings.getSettings().getADCThread().add(intent);
+                                    settings.getADCThread().add(intent);
                             }
                         }
                         else {

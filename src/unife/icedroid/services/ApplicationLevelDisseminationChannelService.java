@@ -174,7 +174,7 @@ public class ApplicationLevelDisseminationChannelService extends Thread {
 
     private void forwardMessage(ICeDROIDMessage msg, boolean thisHostMessage) {
         boolean send = false;
-        switch (Settings.getSettings().getRoutingAlgorithm()) {
+        switch (settings.getRoutingAlgorithm()) {
             case SPRAY_AND_WAIT:
                 //If the message is new from this host
                 if (thisHostMessage) {
