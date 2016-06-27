@@ -9,7 +9,6 @@ import java.util.Date;
 
 public class MessageDispatcher {
     private static final String TAG = "MessageDispatcher";
-    private static final boolean DEBUG = true;
     
     private Settings s;
     
