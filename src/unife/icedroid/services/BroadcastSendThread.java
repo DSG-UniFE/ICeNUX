@@ -58,32 +58,27 @@ public class BroadcastSendThread extends Thread {
                         data = null;
                         String msg = ex.getMessage();
                         if (DEBUG) {
-                        	if (msg != null) {
-                        		msg = TAG + " - " + msg;
-                        	} else {
-                        		msg = TAG + " - " + "Impossible to convert to byte: " + baseMessage;
-                        	}
-                        	System.out.println(msg);
+                        	msg = TAG + " - " + ((msg != null) ? msg :
+                        		"Impossible to convert the message with ID " + baseMessage.getMsgID() +
+                        		" to a sequence of bytes");
+                        	System.err.println(msg);
                         }
                     }
 
                     if (data != null) {
                         packet = new DatagramPacket(data, data.length, broadcastAddress, recvPort);
                         socket.send(packet);
-                        if (DEBUG) System.out.println(TAG + " Message sent: " + baseMessage);
+                        if (DEBUG) {
+                        	System.out.println(TAG + " Message sent: " + baseMessage);
+                        }
                     }
                 }
             } catch (Exception ex) {
                 socket.close();
                 String msg = ex.getMessage();
-                if (DEBUG) {
-                	if (msg != null) {
-                		msg = TAG + " - " + msg;
-                	} else {
-                		msg = TAG + " - " + "Closing BroadcastReceiveThread";
-                	}
-                	System.out.println(msg);
-                }
+            	msg = TAG + " - " + ((msg != null) ? msg : 
+            		"Unhandled exception: closing BroadcastReceiveThread");
+            	System.err.println(msg);
             }
         }
     }
