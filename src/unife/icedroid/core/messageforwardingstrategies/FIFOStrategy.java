@@ -7,9 +7,13 @@ import java.util.ArrayList;
 public class FIFOStrategy extends MessageForwardingStrategy {
 
     @Override
+    // HELLO Messages added at the top of the list
     public void add(ArrayList<BaseMessage> list, BaseMessage msg, int index) {
         if (msg.getTypeOfMessage().equals(HelloMessage.HELLO_MESSAGE)) {
             removeHelloMessage(list);
+            list.add(0, msg);
+            
+            return;
         }
         list.add(msg);
     }
@@ -19,7 +23,7 @@ public class FIFOStrategy extends MessageForwardingStrategy {
             if (list.get(i).getTypeOfMessage().equals(HelloMessage.HELLO_MESSAGE)) {
                     list.remove(i);
                     break;
-                }
             }
+        }
     }
 }
