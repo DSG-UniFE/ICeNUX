@@ -28,8 +28,8 @@ public class MessageDispatcher {
                 byteArrayInputStream = new ByteArrayInputStream(packet.getData());
                 rawMessage = new ObjectInputStream(byteArrayInputStream);
                 baseMessage = (BaseMessage) rawMessage.readObject();
-                byteArrayInputStream.close();
                 rawMessage.close();
+                byteArrayInputStream.close();
 
                 //Filter out messages generated from this host
                 if (!baseMessage.getHostID().equals(s.getHostID())) {
