@@ -69,13 +69,8 @@ public class HelloMessageService extends Thread {
             }
             ADCThread.add(intent);
     	}
+    	
     	helloMessageTimer.cancel();
-    }
-    
-    
-    private NeighborInfo createNeighborInfo(HelloMessage helloMessage) {
-        return new NeighborInfo(helloMessage.getHostID(), helloMessage.getHostUsername(), null,
-        		helloMessage.getHostSubscribedADCs(), helloMessage.getCachedMessages());
     }
     
     public void add(Intent intent) {
@@ -83,6 +78,24 @@ public class HelloMessageService extends Thread {
             intents.add(intent);
             intents.notifyAll();
         }
+    }
+    
+    public void addAckingHelloMessageToQueue() {
+    	helloMessageTimer.cancel();
+        helloMessageTimer.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                HelloMessage helloMessage = new HelloMessage();
+                messageQueueManager.addToForwardingQueue(helloMessage);
+            }
+
+        }, new Date(System.currentTimeMillis()), helloMessagePeriod);
+    }
+    
+    private NeighborInfo createNeighborInfo(HelloMessage helloMessage) {
+        return new NeighborInfo(helloMessage.getHostID(), helloMessage.getHostUsername(), null,
+        		helloMessage.getHostSubscribedADCs(), helloMessage.getCachedMessages());
     }
 
 }
