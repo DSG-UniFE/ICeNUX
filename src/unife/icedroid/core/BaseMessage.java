@@ -155,12 +155,8 @@ public abstract class BaseMessage implements Serializable, Cloneable {
         } catch (Exception ex) {
             String msg = ex.getMessage();
             if (DEBUG) {
-            	if (msg != null) {
-            		msg = TAG + " - " + msg;
-            	} else {
-            		msg = TAG + " - " + "Error getting size of the message";
-            	}
-            	System.out.println(msg);
+            	msg = TAG + " - " + ((msg != null) ? msg : "Error getting the message size");
+            	System.err.println(msg);
             }
         }
         return byteArrayOutputStream.toByteArray().length;
