@@ -10,7 +10,6 @@ import java.util.*;
 
 public class MessageQueueManager {
     private static final String TAG = "MessageQueueManager";
-    private static final boolean DEBUG = true;
 
     private volatile static MessageQueueManager instance;
 
@@ -106,10 +105,15 @@ public class MessageQueueManager {
         }
     }
 
+    /* Add to the forwarding queue in accordance with the configured forwarding
+     * strategy and only if the message was not already in the queue.
+     */
     public void addToForwardingQueue(BaseMessage msg) {
         synchronized (forwardingQueue) {
-            forwardingStrategy.add(forwardingQueue, msg, indexForwardingMessages);
-            forwardingQueue.notifyAll();
+        	if (!forwardingQueue.contains(msg)) {
+	            forwardingStrategy.add(forwardingQueue, msg, indexForwardingMessages);
+	            forwardingQueue.notifyAll();
+        	}
         }
     }
 
@@ -179,11 +183,13 @@ public class MessageQueueManager {
                 // HELLO messages must be sent only once
                 if (message.getTypeOfMessage().equals(HelloMessage.HELLO_MESSAGE)) {
                     forwardingQueue.remove(indexForwardingMessages);
-                } else {
+                }
+                else {
                     if (isExpired(message)) {
                         forwardingQueue.remove(indexForwardingMessages);
                         message = null;
-                    } else {
+                    }
+                    else {
                         indexForwardingMessages++;
                     }
                 }
