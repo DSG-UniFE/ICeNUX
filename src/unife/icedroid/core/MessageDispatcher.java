@@ -38,7 +38,7 @@ public class MessageDispatcher {
                     if (baseMessage.getTypeOfMessage().equals(ICeDROIDMessage.ICEDROID_MESSAGE)) {
                         intent = new Intent();
                         intent.putExtra(ApplicationLevelDisseminationChannelService.EXTRA_ADC_MESSAGE, baseMessage);
-                        Settings.getSettings().getADCThread().add(intent);
+                        s.getADCThread().add(intent);
                     } else {
                         intent = new Intent();
                         intent.putExtra(HelloMessage.EXTRA_HELLO_MESSAGE, baseMessage);
