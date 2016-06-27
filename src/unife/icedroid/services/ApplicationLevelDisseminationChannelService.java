@@ -44,8 +44,9 @@ public class ApplicationLevelDisseminationChannelService extends Thread {
     
 /*
  * The run method of the ApplicationLevelDisseminationChannelService 
- * processes intents from the  MessageDispatcher, associated to
- * received ICeDROID messages or HELLO messages.
+ * processes intents coming from the MessageDispatcher, associated to
+ * newly received ICeDROID messages, or from the HelloMessageService,
+ * associated to pre-processed HELLO messages.
  */
     @Override
     public void run() {
@@ -101,6 +102,7 @@ public class ApplicationLevelDisseminationChannelService extends Thread {
                                     if (L == null || L <= 0) {
                                         Random random = new Random(System.currentTimeMillis());
                                         if (random.nextDouble() > cachingProbability) {
+                                        	// Membrane-passing procedure failed
                                             toCache = false;
                                             messageQueueManager.addToDiscarded(iceMessage);
                                         }
@@ -144,7 +146,7 @@ public class ApplicationLevelDisseminationChannelService extends Thread {
                     }
                 }
                 else {
-                    //If everyone has a message then stop forwarding it
+                    // If everyone has a message then stop forwarding it
                     if (DEBUG) {
                         System.out.println(TAG + " - Handling the HELLO Message UPDATE with ID " +
                         		helloMessage.getMsgID());
@@ -152,6 +154,10 @@ public class ApplicationLevelDisseminationChannelService extends Thread {
                     ArrayList<String> newChannels = (ArrayList<String>) intent.
                                             getExtra(NeighborInfo.EXTRA_NEW_CHANNELS);
                     NeighborInfo n = neighborhoodManager.getNeighborByID(helloMessage.getHostID());
+                    
+                    /* Go through all cached messages to check if we have any
+                     * that matches the new ADC(s) joined by the neighbor 
+                     */
                     for (ICeDROIDMessage msg : messageQueueManager.getCachedMessages()) {
                         if (newChannels.contains(msg.getADCID())) {
                             if (!n.hasInCache(msg)) {
