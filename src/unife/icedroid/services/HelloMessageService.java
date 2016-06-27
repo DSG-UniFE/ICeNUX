@@ -35,6 +35,11 @@ public class HelloMessageService extends Thread {
 
     }
 
+    
+/*
+ * The run method of the HelloMessageService processes intents from the
+ * MessageDispatcher, associated to newly received HELLO messages.
+ */
     @Override
     public void run() {
     	Intent intent;
@@ -50,7 +55,6 @@ public class HelloMessageService extends Thread {
             }
     		
     		HelloMessage helloMessage = (HelloMessage) intent.getExtra(HelloMessage.EXTRA_HELLO_MESSAGE);
-
             NeighborInfo neighbor = createNeighborInfo(helloMessage);
             
             // If add() returns null, the neighbor is new
