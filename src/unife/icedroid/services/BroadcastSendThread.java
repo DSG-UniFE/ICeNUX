@@ -10,6 +10,10 @@ import java.net.InetAddress;
 import java.net.DatagramSocket;
 import java.net.DatagramPacket;
 
+/**
+ * BroadcastSendThread performs broadcasts of raw packets 
+ * on the network.
+ */
 public class BroadcastSendThread extends Thread {
     private static final String TAG = "BroadcastSendThread";
     private static final boolean DEBUG = true;
