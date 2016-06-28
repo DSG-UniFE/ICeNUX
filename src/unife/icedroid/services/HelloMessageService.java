@@ -86,6 +86,7 @@ public class HelloMessageService extends Thread {
     
     public void addAckingHelloMessageToQueue() {
     	helloMessageTimer.cancel();
+    	helloMessageTimer = new Timer(TAG);
         helloMessageTimer.schedule(new TimerTask() {
 
             @Override
