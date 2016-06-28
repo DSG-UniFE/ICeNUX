@@ -12,16 +12,12 @@ public class ICeDROID {
     private static ICeDROID instance = null;
 
     private ChannelListManager channelListManager;
-    private NeighborhoodManager neighborhoodManager;
-    private MessageQueueManager messageQueueManager;
     private RoutingAlgorithm routingAlgorithm;
     private Settings icedroidSettings;
 
     private ICeDROID(OnMessageReceiveListener listener) throws Exception {
         if ((icedroidSettings = Settings.getSettings(listener)) != null) {
             channelListManager = ChannelListManager.getChannelListManager();
-            neighborhoodManager = NeighborhoodManager.getNeighborhoodManager();
-            messageQueueManager = MessageQueueManager.getMessageQueueManager();
         } else {
             throw new Exception("Impossible to retrieve instance of the Settings class");
         }
