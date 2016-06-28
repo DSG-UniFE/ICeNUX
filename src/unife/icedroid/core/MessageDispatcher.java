@@ -46,7 +46,7 @@ public class MessageDispatcher {
                     }
                 }
             } catch (Exception ex) {
-            	System.err.println(TAG + " - " + ex.getMessage());
+            	System.err.println(TAG + " - " + ex + " - Error: " + ex.getMessage());
             }
     }
 }

@@ -31,9 +31,9 @@ public class ApplicationLevelDisseminationChannelService extends Thread {
     public ApplicationLevelDisseminationChannelService(OnMessageReceiveListener listener) {
         settings = Settings.getSettings();
         messageQueueManager = MessageQueueManager.getMessageQueueManager();
-        helloMessageService = settings.getHMThread();
         channelListManager = ChannelListManager.getChannelListManager();
         neighborhoodManager = NeighborhoodManager.getNeighborhoodManager();
+        helloMessageService = null;
         onMessageReceiveListener = listener;
         intents = new ArrayList<>(0);
         
@@ -235,5 +235,10 @@ public class ApplicationLevelDisseminationChannelService extends Thread {
     
     public interface OnMessageReceiveListener {
         public void receive(ICeDROIDMessage message);
+    }
+    
+    
+    public void registerHelloMessageService (HelloMessageService hms) {
+    	helloMessageService = hms;
     }
 }

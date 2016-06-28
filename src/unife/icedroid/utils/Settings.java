@@ -189,23 +189,26 @@ public class Settings {
         //Application-level Dissemination Channel Service
         ADCThread = new ApplicationLevelDisseminationChannelService(listener);
         ADCThread.start();
+        
+        //HelloMessageService
+        HMThread = new HelloMessageService();
+        HMThread.start();
+        if (!isServiceRunning(HMThread)) {
+            throw new Exception("HelloMessageServiceNotRunning");
+        }
+        
         //BroadcastSendService
         sendThread = new BroadcastSendThread();
         sendThread.start();
         if (!isServiceRunning(sendThread)) {
             throw new Exception("BroadcastSendServiceNotRunning");
         }
+        
         //BroadcastReceiveService
         rcvThread = new BroadcastReceiveThread();
         rcvThread.start();
         if (!isServiceRunning(rcvThread)) {
             throw new Exception("BroadcastReceiveServiceNotRunning");
-        }
-        //HelloMessageService
-        HMThread = new HelloMessageService();
-        HMThread.start();
-        if (!isServiceRunning(HMThread)) {
-            throw new Exception("HelloMessageServiceNotRunning");
         }
     }
 

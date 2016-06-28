@@ -103,7 +103,7 @@ public class NeighborhoodManager {
                 }
             }
             
-            NeighborInfo n = new NeighborInfo(ID, null, null, null, null);
+            NeighborInfo n = new NeighborInfo(ID, null, null, new ArrayList<>(), new ArrayList<>());
             return n;
         }
     }

@@ -33,6 +33,7 @@ public class HelloMessageService extends Thread {
 
         }, new Date(System.currentTimeMillis()), helloMessagePeriod);
 
+        ADCThread.registerHelloMessageService(this);
     }
 
     
