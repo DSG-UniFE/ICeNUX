@@ -34,18 +34,18 @@ import javax.swing.DefaultListModel;
 public class ChatWindow {
     private static final String TAG = "ChatWindow";
 	
-	public static void open(final Subscription subscription) {
+	public static void open(final Subscription subscription, JList<String> parentList) {
 		EventQueue.invokeLater(new Runnable() {
 			
 			@Override
 			public void run() {
-				start(subscription);
+				start(subscription, parentList);
 			}
 			
 		});
 	}
 	
-	private static void start(final Subscription subscription) {
+	private static void start(final Subscription subscription, JList<String> parentList) {
 		final JFrame window = new JFrame(subscription.toString());
 		window.setSize(400, 500);
 		window.setResizable(false);
@@ -126,6 +126,7 @@ public class ChatWindow {
 						wk.reset();
 					}
 					
+				} catch (InterruptedException iex) {
 				} catch (Exception ex) {
 					System.err.println(TAG + " - " + ex + ": " + ex.getMessage());
 				}
@@ -149,6 +150,9 @@ public class ChatWindow {
 			public void windowClosing(WindowEvent e) {
 				worker.cancel(true);
 				window.dispose();
+				if (parentList != null) {
+					parentList.removeSelectionInterval(0, parentList.getSelectedIndex());
+				}
 			}
 			
 		});
@@ -165,7 +169,9 @@ public class ChatWindow {
                 listData.addElement(line);
             }
             br.close();
-        } catch (Exception ex) {}
+        } catch (Exception ex) {
+			System.err.println(TAG + " - " + ex + ": " + ex.getMessage());
+        }
 		
 		return listData;
 	}

@@ -118,7 +118,7 @@ public class ICeNUXWindow {
 				        
 				        Intent intent = new Intent();
 				        intent.putExtra(Subscription.EXTRA_SUBSCRIPTION, subscription);
-				        ChatWindow.open(subscription);
+				        ChatWindow.open(subscription, null);
 				        dialog.dispose();
 					}
 					
@@ -169,7 +169,7 @@ public class ICeNUXWindow {
 						
 						Intent intent = new Intent();
 				        intent.putExtra(Subscription.EXTRA_SUBSCRIPTION, subscription);
-				        ChatWindow.open(subscription);
+				        ChatWindow.open(subscription, list);
 					}
 				}				
 			}
