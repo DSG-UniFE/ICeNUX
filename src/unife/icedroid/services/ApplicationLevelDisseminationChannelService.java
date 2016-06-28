@@ -67,6 +67,10 @@ public class ApplicationLevelDisseminationChannelService extends Thread {
             /* There's a new regular message; first it needs to be decided whether 
              * to cache it or not, and then whether to forward it or not */
             if (iceMessage != null) {
+            	// Received a new ICeDROIDMessage --> add message to the neighbor's cache
+                NeighborInfo n = neighborhoodManager.getNeighborByID(iceMessage.getHostID());
+                neighborhoodManager.add(n);
+                n.addToCache(new ICeDROIDMessage(iceMessage));
                 if (iceMessage.getHostID().equals(Settings.getSettings().getHostID())) {
                     //An application running on this host generated the message
                     switch (settings.getRoutingAlgorithm()) {
@@ -171,7 +175,11 @@ public class ApplicationLevelDisseminationChannelService extends Thread {
                     for (BaseMessage m : fm) {
                         if (m.getTypeOfMessage().equals(ICeDROIDMessage.ICEDROID_MESSAGE)) {
                             if (neighborhoodManager.everyoneHasThisMessage(m)) {
-                                if (DEBUG) System.out.println(TAG + " Handling an HelloMessage: removed " + m);
+                                if (DEBUG) {
+                                	System.out.println(TAG + " - Handling an HelloMessage: removed message " +
+                                			m + " from the forwarding queue because all neighbors received it");
+                                }
+                                
                                 messageQueueManager.removeMessageFromForwardingQueue(m);
                             }
                         }

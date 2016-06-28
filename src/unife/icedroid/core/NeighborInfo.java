@@ -63,6 +63,12 @@ public class NeighborInfo implements Serializable {
         }
     }
 
+    public boolean addToCache(ICeDROIDMessage msg) {
+        synchronized (cachedMessages) {
+            return cachedMessages.add(msg);
+        }
+    }
+
     public synchronized void update(NeighborInfo neighbor) {
         hostUsername = neighbor.hostUsername;
         lastTimeSeen = neighbor.lastTimeSeen;

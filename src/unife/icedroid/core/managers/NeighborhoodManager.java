@@ -60,6 +60,7 @@ public class NeighborhoodManager {
             ArrayList<String> newChannels = null;
             if (ni != null) {
             	// Check if the neighbor has subscribed to new ADCs
+                ni.setHostUsername(neighbor.getHostUsername());
                 newChannels = new ArrayList<>(0);
                 for (String c : neighbor.getNeighborSubscribedADCs()) {
                     if (!ni.getNeighborSubscribedADCs().contains(c)) {
@@ -68,7 +69,8 @@ public class NeighborhoodManager {
                 }
                 ni.update(neighbor);
                 task = new NeighborRemoveTask(this, ni);
-            } else {
+            }
+            else {
                 neighborsList.add(neighbor);
                 task = new NeighborRemoveTask(this, neighbor);
             }
@@ -100,7 +102,9 @@ public class NeighborhoodManager {
                     return n;
                 }
             }
-            return null;
+            
+            NeighborInfo n = new NeighborInfo(ID, null, null, null, null);
+            return n;
         }
     }
 
