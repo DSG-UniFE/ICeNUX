@@ -11,7 +11,7 @@ public class FIFOStrategy extends MessageForwardingStrategy {
     public void add(ArrayList<BaseMessage> list, BaseMessage msg, int index) {
         if (msg.getTypeOfMessage().equals(HelloMessage.HELLO_MESSAGE)) {
             removeHelloMessage(list);
-            list.add(0, msg);
+            list.add(index, msg);
             
             return;
         }
