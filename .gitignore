@@ -20,7 +20,7 @@ tmp/**/*
 *~.nib
 local.properties
 .classpath
-.settings/
+.settings/**
 .loadpath
 
 # Eclipse Core
