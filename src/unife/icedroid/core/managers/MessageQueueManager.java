@@ -111,6 +111,10 @@ public class MessageQueueManager {
     public void addToForwardingQueue(BaseMessage msg) {
         synchronized (forwardingQueue) {
         	if (!forwardingQueue.contains(msg)) {
+                if (indexForwardingMessages >= forwardingQueue.size()) {
+                    indexForwardingMessages = 0;
+                }
+                
 	            forwardingStrategy.add(forwardingQueue, msg, indexForwardingMessages);
 	            forwardingQueue.notifyAll();
         	}

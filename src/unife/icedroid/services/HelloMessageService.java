@@ -96,6 +96,9 @@ public class HelloMessageService extends Thread {
             }
 
         }, new Date(System.currentTimeMillis()), helloMessagePeriod);
+        if (DEBUG) {
+        	System.out.println(TAG + " - Scheduled a new HELLO message for ACKing");
+        }
     }
     
     private NeighborInfo createNeighborInfo(HelloMessage helloMessage) {

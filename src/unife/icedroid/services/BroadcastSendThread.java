@@ -79,10 +79,12 @@ public class BroadcastSendThread extends Thread {
                 }
             } catch (Exception ex) {
                 socket.close();
-                String msg = ex.getMessage();
-            	msg = TAG + " - " + ((msg != null) ? msg : 
-            		"Unhandled exception: closing BroadcastReceiveThread");
-            	System.err.println(msg);
+                if (!Thread.interrupted()) {
+	                String msg = ex.getMessage();
+	            	msg = TAG + " - " + ((msg != null) ? msg : 
+	            		"Unhandled exception: closing BroadcastReceiveThread");
+	            	System.err.println(msg);
+                }
             }
         }
     }
