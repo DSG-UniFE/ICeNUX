@@ -119,7 +119,7 @@ public class ChatWindow {
 					                }
 					                br.close();
 					            } catch (Exception ex) {
-					                System.out.println(ex);
+					                System.err.println(TAG + " - " + ex + ": " + ex.getMessage());
 					            }
 							}
 						}
@@ -127,7 +127,7 @@ public class ChatWindow {
 					}
 					
 				} catch (Exception ex) {
-					System.out.println(ex); 
+					System.err.println(TAG + " - " + ex + ": " + ex.getMessage());
 				}
 				
 				return null;
