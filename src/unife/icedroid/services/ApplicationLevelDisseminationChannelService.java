@@ -67,7 +67,7 @@ public class ApplicationLevelDisseminationChannelService extends Thread {
             /* There's a new regular message; first it needs to be decided whether 
              * to cache it or not, and then whether to forward it or not */
             if (iceMessage != null) {
-                if (iceMessage.getHostID().equals(Settings.getSettings().getHostID())) {
+                if (iceMessage.getHostID().equals(settings.getHostID())) {
                     //An application running on this host generated the message
                     switch (settings.getRoutingAlgorithm()) {
                         case SPRAY_AND_WAIT:
