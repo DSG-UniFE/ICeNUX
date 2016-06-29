@@ -21,19 +21,19 @@ The figure below shows the architecture of ICeNUX:
 ![Architecture of the ICeNUX middleware](https://github.com/DSG-UniFE/ICeNUX/blob/master/doc/ICeNUX%20Architecture.png)
 
 
-The ICeNUX API is the layer that allows applications to interface with the middleware.
+The **ICeNUX API** is the layer that allows applications to interface with the middleware.
 
-The ADC manager is the core of ICeNUX. It implemets the probabilistic logic that drives the information dissemination when Application-level Dissemination Channels are used and takes care of delivering IOs to the applications. The ADC Manager interfaces with the Subscription Manager, the Neighborhood Manager, and the Routing Algorithm to make decisions concerning message dissemination.
+The **ADC Manager** is the core of ICeNUX. It implemets the probabilistic logic that drives the information dissemination when Application-level Dissemination Channels are used and takes care of delivering IOs to the applications. The ADC Manager interfaces with the Subscription Manager, the Neighborhood Manager, and the Routing Algorithm to make decisions concerning message dissemination.
 
-The Subscription Manager keeps track of all ADCs joined by the current node and which applications subscribed to which channel.
+The **Subscription Manager** keeps track of all ADCs joined by the current node and which applications subscribed to which channel.
 
-The Routing Algorithm exposes a common interface to which all implementations of a routing protocol need to adhere. The current version of ICeNUX only supports the Spray and Wait routing protocol. Following the rules of the routing protocol used, IOs are enqueued in a forwarding queue from which the Message Sender retrieves packet for broadcasting.
+The **Routing Algorithm** exposes a common interface to which all implementations of a routing protocol need to adhere. The current version of ICeNUX only supports the Spray and Wait routing protocol. Following the rules of the routing protocol used, IOs are enqueued in a forwarding queue from which the **Message Sender** retrieves packet for broadcasting.
 
-The Neighborhood Manager keeps track of all neighbors a node has encountered in the past and those that are currently within communication range. The contact history also includes the ADCs to which other nodes belong and the IOs they have in their cache.
+The **Neighborhood Manager** keeps track of all neighbors a node has encountered in the past and those that are currently within communication range. The contact history also includes the ADCs to which other nodes belong and the IOs they have in their cache.
 
-The Hello Message Handler analyzes HELLO messages sent by nearby neighbors and updates the information stored in the Neighborhood Manager.
+The **Hello Message Handler** analyzes HELLO messages sent by nearby neighbors and updates the information stored in the Neighborhood Manager.
 
-The Message Receiver continuously listens for new packets coming from the network interface and forwards them to the Message Dispatcher, which infers the type of packet received and dispatches it to the right component for handling. Message types include HELLO messages and ICeNUX data messages.
+The **Message Receiver** continuously listens for new packets coming from the network interface and forwards them to the **Message Dispatcher**, which infers the type of packet received and dispatches it to the right component for handling. Message types include HELLO messages (dispatched to the Hello Message Handler) and ICeNUX data messages (dispatched to the ADC Manager).
 
 
 
