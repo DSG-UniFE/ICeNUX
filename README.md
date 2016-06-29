@@ -1,5 +1,5 @@
 # ICeNUX
-ICeNUX is an Information-centric Networking communications middleware for ad-hoc and opportunistic networks implemented in Java.
+ICeNUX is an *Information-centric Networking* communications middleware for ad-hoc and opportunistic networks implemented in Java.
 ICeNUX supports Unix-based operating systems and implements the techniques conceived within
 [ICeDiM](http://endif.unife.it/en/research/research-1/information-technology/computer-science/distributed-systems-group/research-projects/iceone), a research project conducted by the University of Ferrara, Italy.
 
@@ -10,8 +10,8 @@ ICeNUX makes use of broadcast communications to optimize the spectre efficiency 
 All nodes that run ICeNUX need to join the same ad hoc network on top of which communications will take place. 
 Communications between ICeNUX nodes are based on the Information-centric Networking (ICN) paradigm, which provides in-network caching of Information Objects (IOs) and a publish-subscribe communication scheme.
 
-The current version of ICeNUX relies on the Spray and Wait [1] routing protocol to provide routing capability to nodes in the ad hoc network. ICeNUX aims at achieving the good results of flooding-based routing algorithms in terms of message delivery ratio and latency while keeping resource consumption under control.
-To this purpose, ICeDIM introduces the concept of Application-level Dissemination Channels (ADCs), which limit the consumption of bandwidth, memory, and computational resources typical of looding-based routing algorithms while maintaing high levels of delivery ratio and low latency.
+The current version of ICeNUX relies on the *Spray and Wait* [1] routing protocol to provide routing capability to nodes in the ad hoc network. ICeNUX aims at achieving the good results of flooding-based routing algorithms in terms of message delivery ratio and latency while keeping resource consumption under control.
+To this purpose, ICeDIM introduces the concept of **Application-level Dissemination Channels** (ADCs), which limit the consumption of bandwidth, memory, and computational resources typical of looding-based routing algorithms while maintaing high levels of delivery ratio and low latency.
 
 
 
@@ -33,7 +33,7 @@ The **Neighborhood Manager** keeps track of all neighbors a node has encountered
 
 The **Hello Message Handler** analyzes HELLO messages sent by nearby neighbors and updates the information stored in the Neighborhood Manager.
 
-The **Message Receiver** continuously listens for new packets coming from the network interface and forwards them to the **Message Dispatcher**, which infers the type of packet received and dispatches it to the right component for handling. Message types include HELLO messages (dispatched to the Hello Message Handler) and ICeNUX data messages (dispatched to the ADC Manager).
+The **Message Receiver** continuously listens for new packets coming from the network interface and forwards them to the **Message Dispatcher**, which infers the type of packet received and dispatches it to the right component for handling. Message types include *HELLO messages* (dispatched to the Hello Message Handler) and *ICeNUX data messages* (dispatched to the ADC Manager).
 
 
 
