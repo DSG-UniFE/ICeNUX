@@ -5,38 +5,42 @@ import java.util.HashMap;
 
 public class ICeDROIDMessage extends BaseMessage {
 	private static final long serialVersionUID = 1;
+    private static final String TAG = "ICeDROIDMessage";
     public static final String ICEDROID_MESSAGE = "ICeDROIDMessage";
     public static final String EXTRA_ICEDROID_MESSAGE = "unife.icedroid.ICEDROID_MESSAGE";
 
-    private String channel;
+    private String adcID;
     private HashMap<String, Integer> properties;
 
     public ICeDROIDMessage(String channel) {
         super();
+        
         typeOfMessage = ICEDROID_MESSAGE;
         ttl = INFINITE_TTL;
         priority = NO_PRIORITY_LEVEL;
-        this.channel = channel;
+        
+        this.adcID = channel;
         properties = new HashMap<>(0);
         setSize();
     }
 
     public ICeDROIDMessage(ICeDROIDMessage msg) {
         super(msg);
-        channel = msg.channel;
+        
+        adcID = msg.adcID;
         properties = msg.properties;
     }
 
     public String getADCID() {
-        return channel;
+        return adcID;
     }
 
     public Integer getProperty(String key) {
         return properties.get(key);
     }
 
-    public void setChannel(String channel) {
-        this.channel = channel;
+    public void setADCID(String channel) {
+        this.adcID = channel;
     }
 
     public void setProperty(String key, Integer value) {
@@ -49,7 +53,9 @@ public class ICeDROIDMessage extends BaseMessage {
         try {
             iCeDROIDMessage = (ICeDROIDMessage) super.clone();
             iCeDROIDMessage.properties = (HashMap<String, Integer>) properties.clone();
-        } catch (Exception ex) {}
+        } catch (Exception ex) {
+        	System.err.println(TAG + " - " + ex + ": " + ex.getMessage());
+        }
         return iCeDROIDMessage;
     }
 }

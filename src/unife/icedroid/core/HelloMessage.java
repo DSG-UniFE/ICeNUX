@@ -14,6 +14,7 @@ public class HelloMessage extends BaseMessage {
 
     public HelloMessage() {
         super();
+        
         typeOfMessage = HELLO_MESSAGE;
         ttl = INFINITE_TTL;
         priority = MAX_PRIORITY_LEVEL;
