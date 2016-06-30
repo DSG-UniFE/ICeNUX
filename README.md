@@ -46,7 +46,9 @@ At startup, ICeNUX issues commands that require root privileges in order to set 
 
     sudo java -jar ICeNUX.jar
 
-The commands that ICeNUX issues for the set up of the ad hoc network differ depending on the OS and the distribution used.
+Note that, if, for any reasons, ICeNUX fails to set up the ad hoc network and exits with an error, it is possible for the user to manually configure the wireless NIC and create an ad hoc network that complies with the options specifed in the settings.cfg file. After this is done, ICeNUX should detect that the ad hoc network has already been created and configured and start working normally.
+
+The commands that ICeNUX issues for the set up of the ad hoc network differ depending on the OS and the distribution used. The list of commands executed by ICeNUX follows.
 
 
 #### Ubuntu Linux OS
@@ -100,4 +102,8 @@ When the application exits, the following shell commands are launched to restore
     ifconfig <network_interface_name> up
 
 All commands are issued as root.
+
+
+
+## Writing your own application that uses ICeNUX
 
