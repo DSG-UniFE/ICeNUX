@@ -105,5 +105,23 @@ All commands are issued as root.
 
 
 
-## Writing your own application that uses ICeNUX
+## How to use ICeNUX from your own application
+Applications that want to use ICeNUX for communications need to first load the middleware, and instantiate all necessary classes in memory. In order to do this, ICeNUX provides the static method:
 
+ICeDROID.getInstance(OnMessageReceiveListener listener)
+
+The `ICeDROID` class is located in the package `unife.icedroid.core`. This version of the `getInstance()` method is also responsible for initializing the middleware, parse the settings.cfg file, registering a listener for message reception, and instantiate all necessary classes within ICeNUX.
+
+
+When a message needs to be delivered to the application, ICeNUX invokes the `receive()` method on the listener that implements the interface `OnMessageReceiveListener` (also located in the package `unife.icedroid.core`) and that was registered at the moment of the call to `ICeDROID.getInstance(OnMessageReceiveListener listener)`.
+Therefore, a user application needs to define a class that implements the `OnMessageReceiveListener` interface and pass an instance of that class to the first call to the `getInstance(listener)` method.
+
+
+The `ICeDROID` class also provides the API to send new IOs:
+
+    ICeDROID.send(ICeDROIDMessage msg)
+
+The `send()` method of the `ICeDROID` class takes an instance of `ICeDROIDMessage` as a parameter: applications can inherit from `ICeDROIDMessage` (also located in the package `unife.icedroid.core`) and define their own type of message to be passed to the method. The constructor of `ICeDROIDMessage` takes as a parameter the `String` identifier of the Application-level Dissemination Channel (ADC) within which the message will be sent.
+
+
+Finally, the package `unife.icedroid.core` also contains the class `Subscription`, that applications can use to manage subscriptions. In order to subscribe to a specific ADC, applications can invoke the `subscribe(String adcID)` method of the `ICeDROID` class, which takes a `String` that identifies the ADC the application wants to join. Applications need to subscribe to a specific ADC in order to receive messages sent within that channel.
