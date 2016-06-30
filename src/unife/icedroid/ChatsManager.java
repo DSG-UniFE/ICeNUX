@@ -2,7 +2,8 @@ package unife.icedroid;
 
 import unife.icedroid.core.ICeDROIDMessage;
 import unife.icedroid.resources.Constants;
-import unife.icedroid.services.ApplicationLevelDisseminationChannelService.OnMessageReceiveListener;
+import unife.icedroid.core.OnMessageReceiveListener;
+import unife.icedroid.core.Subscription;
 
 import java.io.File;
 import java.io.FileOutputStream;

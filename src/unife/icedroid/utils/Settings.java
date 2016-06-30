@@ -5,7 +5,7 @@ import unife.icedroid.services.ApplicationLevelDisseminationChannelService;
 import unife.icedroid.services.HelloMessageService;
 import unife.icedroid.services.BroadcastReceiveThread;
 import unife.icedroid.services.BroadcastSendThread;
-import unife.icedroid.services.ApplicationLevelDisseminationChannelService.OnMessageReceiveListener;
+import unife.icedroid.core.OnMessageReceiveListener;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.NetworkInterface;

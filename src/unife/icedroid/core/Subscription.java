@@ -1,4 +1,4 @@
-package unife.icedroid;
+package unife.icedroid.core;
 
 import java.io.Serializable;
 

@@ -1,5 +1,6 @@
 package unife.icedroid;
 
+import unife.icedroid.core.Subscription;
 import unife.icedroid.core.ICeDROIDMessage;
 
 public class TxtMessage extends ICeDROIDMessage {

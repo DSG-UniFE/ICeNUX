@@ -1,6 +1,6 @@
 package unife.icedroid.core;
 
-import unife.icedroid.services.ApplicationLevelDisseminationChannelService.OnMessageReceiveListener;
+import unife.icedroid.core.OnMessageReceiveListener;
 import unife.icedroid.core.managers.ChannelListManager;
 import unife.icedroid.core.routingalgorithms.RoutingAlgorithm;
 import unife.icedroid.core.routingalgorithms.RoutingAlgorithmFactory;

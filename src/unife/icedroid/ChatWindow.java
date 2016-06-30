@@ -1,6 +1,7 @@
 package unife.icedroid;
 
 import unife.icedroid.core.ICeDROID;
+import unife.icedroid.core.Subscription;
 import unife.icedroid.resources.Constants;
 
 import java.awt.BorderLayout;

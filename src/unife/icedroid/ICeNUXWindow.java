@@ -2,6 +2,7 @@ package unife.icedroid;
 
 import unife.icedroid.UIElements.GhostText;
 import unife.icedroid.core.Intent;
+import unife.icedroid.core.Subscription;
 import unife.icedroid.resources.Constants;
 
 import java.awt.EventQueue;
