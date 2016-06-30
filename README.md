@@ -108,7 +108,7 @@ All commands are issued as root.
 ## How to use ICeNUX from your own application
 Applications that want to use ICeNUX for communications need to first load the middleware, and instantiate all necessary classes in memory. In order to do this, ICeNUX provides the static method:
 
-ICeDROID.getInstance(OnMessageReceiveListener listener)
+    ICeDROID.getInstance(OnMessageReceiveListener listener)
 
 The `ICeDROID` class is located in the package `unife.icedroid.core`. This version of the `getInstance()` method is also responsible for initializing the middleware, parse the settings.cfg file, registering a listener for message reception, and instantiate all necessary classes within ICeNUX.
 
