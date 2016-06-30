@@ -12,14 +12,14 @@ public class ICeDROIDMessage extends BaseMessage {
     private String adcID;
     private HashMap<String, Integer> properties;
 
-    public ICeDROIDMessage(String channel) {
+    public ICeDROIDMessage(String adcID) {
         super();
         
         typeOfMessage = ICEDROID_MESSAGE;
         ttl = INFINITE_TTL;
         priority = NO_PRIORITY_LEVEL;
         
-        this.adcID = channel;
+        this.adcID = adcID;
         properties = new HashMap<>(0);
         setSize();
     }
@@ -39,8 +39,8 @@ public class ICeDROIDMessage extends BaseMessage {
         return properties.get(key);
     }
 
-    public void setADCID(String channel) {
-        this.adcID = channel;
+    public void setADCID(String adcID) {
+        this.adcID = adcID;
     }
 
     public void setProperty(String key, Integer value) {
