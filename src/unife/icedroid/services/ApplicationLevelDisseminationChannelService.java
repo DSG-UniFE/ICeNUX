@@ -5,6 +5,7 @@ import unife.icedroid.core.BaseMessage;
 import unife.icedroid.core.HelloMessage;
 import unife.icedroid.core.ICeDROIDMessage;
 import unife.icedroid.core.NeighborInfo;
+import unife.icedroid.core.OnMessageReceiveListener;
 import unife.icedroid.core.managers.*;
 import unife.icedroid.utils.Settings;
 import java.util.ArrayList;
@@ -231,10 +232,6 @@ public class ApplicationLevelDisseminationChannelService extends Thread {
             messageQueueManager.addToForwardingQueue(msg);
         }
 
-    }
-    
-    public interface OnMessageReceiveListener {
-        public void receive(ICeDROIDMessage message);
     }
     
     
